@@ -1,0 +1,1827 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<title>Revisión de Áreas — Sodexo @ ICU Medical</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a1a; font-size: 15px; }
+  .page { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* Nav tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #fff; border-radius: 12px; padding: 5px; border: 1px solid #e4e4e4; }
+  .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; background: transparent; color: #888; transition: all 0.15s; }
+  .tab-btn.active { background: #004B93; color: #fff; }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  .header { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid #e4e4e4; }
+  .logo { width: 48px; height: 48px; border-radius: 50%; background: #004B93; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .logo span { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
+  .header-text h1 { font-size: 17px; font-weight: 600; color: #004B93; }
+  .header-text p { font-size: 13px; color: #666; margin-top: 2px; }
+
+  .meta-card { background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #e4e4e4; }
+  .meta-grid { display: grid; gap: 14px; }
+  .meta-grid.three { grid-template-columns: 1fr 1fr 1fr; }
+  @media (max-width: 520px) { .meta-grid.three { grid-template-columns: 1fr 1fr; } }
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-group label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
+  .field-group input, .field-group select { border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 14px; color: #1a1a1a; background: #fafafa; width: 100%; transition: border-color 0.15s; -webkit-appearance: none; appearance: none; }
+  .field-group input:focus, .field-group select:focus { outline: none; border-color: #004B93; background: #fff; }
+  .field-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
+
+  .area-selector-card { background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #e4e4e4; }
+  .area-selector-card h2 { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .area-select-wrap { position: relative; }
+  .area-select-wrap select { width: 100%; border: 1.5px solid #004B93; border-radius: 10px; padding: 12px 14px; font-size: 15px; color: #1a1a1a; background: #f0f5ff; font-weight: 500; -webkit-appearance: none; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23004B93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .area-select-wrap::after { display: none; }
+  .category-badge { display: inline-flex; align-items: center; gap: 6px; background: #e8f0fe; color: #004B93; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; margin-top: 10px; }
+
+  .summary-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .sum-item { background: #fff; border-radius: 12px; border: 1px solid #e4e4e4; padding: 12px; text-align: center; }
+  .sum-item .val { font-size: 26px; font-weight: 600; }
+  .sum-item .lbl { font-size: 11px; color: #888; margin-top: 2px; }
+  .ok-color { color: #3B6D11; }
+  .fail-color { color: #A32D2D; }
+  .na-color { color: #888; }
+
+  .items-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
+  .items-card-header { padding: 14px 18px 0; }
+  .items-card-header h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+  .items-table { width: 100%; border-collapse: collapse; }
+  .items-table thead tr { border-bottom: 1px solid #f0f0f0; }
+  .items-table th { font-size: 11px; font-weight: 600; color: #aaa; text-align: left; padding: 8px 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .items-table th.center { text-align: center; }
+  .items-table td { padding: 10px 12px; border-bottom: 1px solid #f8f8f8; vertical-align: middle; font-size: 13px; color: #333; }
+  .items-table tr:last-child td { border-bottom: none; }
+  .radio-group { display: flex; justify-content: center; }
+  .radio-opt { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #ddd; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.12s; color: #aaa; -webkit-tap-highlight-color: transparent; user-select: none; }
+  .radio-opt:hover { border-color: #bbb; color: #666; background: #f5f5f5; }
+  .radio-opt.ok   { background: #EAF3DE; border-color: #639922; color: #3B6D11; }
+  .radio-opt.fail { background: #FCEBEB; border-color: #E24B4A; color: #A32D2D; }
+  .radio-opt.na   { background: #f3f3f3; border-color: #bbb; color: #888; }
+  .section-divider { font-size: 11px; font-weight: 600; color: #004B93; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px 4px; background: #f0f5ff; border-top: 1px solid #e4e4e4; border-bottom: 1px solid #e4e4e4; }
+  .obs-wrap { padding: 12px 18px 16px; border-top: 1px solid #f0f0f0; margin-top: 4px; }
+  .obs-label { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
+  textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 13px; color: #1a1a1a; background: #fafafa; resize: vertical; min-height: 64px; font-family: inherit; transition: border-color 0.15s; }
+  textarea:focus { outline: none; border-color: #004B93; background: #fff; }
+  .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
+  .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
+
+  /* Photos */
+  .photos-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
+  .photos-card h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .photos-card p { font-size: 12px; color: #999; margin-bottom: 14px; }
+  .photo-upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border: 1.5px dashed #c0cfe8; border-radius: 10px; background: #f5f8ff; color: #004B93; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; }
+  .photo-upload-btn:hover { background: #eaf0ff; border-color: #004B93; }
+  .photo-upload-btn.disabled { opacity: 0.4; pointer-events: none; }
+
+  /* iOS Safari touch fix — todos los elementos interactivos */
+  button, label, select, input, canvas, .tab-btn, .radio-opt, .report-card-header, .hallazgos-view-btn, .kpi-turno-btn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  * { -webkit-touch-callout: none; }
+  #photoInput { display: none; }
+  .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 14px; }
+  .photo-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #e4e4e4; aspect-ratio: 1; }
+  .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .photo-remove { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff; border: none; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+  .photo-label-input { width: 100%; border: none; border-top: 1px solid #f0f0f0; padding: 5px 7px; font-size: 11px; color: #555; background: #fff; font-family: inherit; }
+  .photo-label-input:focus { outline: none; background: #fafafa; }
+  .photo-count { font-size: 12px; color: #888; margin-top: 8px; text-align: right; }
+
+  /* Signatures */
+  .signatures-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+  @media (max-width: 500px) { .signatures-grid { grid-template-columns: 1fr; } }
+  .signature-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 18px; }
+  .signature-card h2 { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .signature-card p { font-size: 11px; color: #999; margin-bottom: 10px; }
+  .sig-wrap { border: 1.5px dashed #ccc; border-radius: 10px; background: #fafafa; position: relative; overflow: hidden; }
+  .sig-canvas { display: block; width: 100%; height: 110px; cursor: crosshair; touch-action: none; }
+  .sig-ph { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; color: #ccc; pointer-events: none; white-space: nowrap; }
+  .sig-name-input { width: 100%; border: none; border-top: 1px solid #f0f0f0; padding: 7px 10px; font-size: 13px; color: #333; background: #fff; font-family: inherit; }
+  .sig-name-input:focus { outline: none; background: #fafafa; }
+  .btn-ghost { font-size: 11px; color: #999; background: none; border: none; padding: 5px 0; cursor: pointer; font-family: inherit; margin-top: 6px; }
+  .btn-ghost:hover { color: #333; }
+
+  /* Submit */
+  .btn-submit { width: 100%; padding: 15px; background: #004B93; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn-submit:hover { opacity: 0.9; }
+  .btn-submit:active { opacity: 0.8; transform: scale(0.99); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  /* Config card */
+  .config-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
+  .config-card h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+  .config-card p { font-size: 12px; color: #999; margin-bottom: 12px; }
+  .config-card input { border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 13px; color: #1a1a1a; background: #fafafa; width: 100%; font-family: inherit; }
+  .config-card input:focus { outline: none; border-color: #004B93; }
+  .config-status { font-size: 12px; margin-top: 8px; padding: 6px 10px; border-radius: 7px; display: none; }
+  .config-status.ok { background: #EAF3DE; color: #3B6D11; display: block; }
+  .config-status.err { background: #FCEBEB; color: #A32D2D; display: block; }
+
+  /* History */
+  .history-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+  .history-filters input, .history-filters select { border: 1px solid #ddd; border-radius: 8px; padding: 8px 11px; font-size: 13px; color: #1a1a1a; background: #fff; font-family: inherit; flex: 1; min-width: 140px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .history-empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; background: #fff; border-radius: 14px; border: 1px solid #e4e4e4; }
+  .report-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; margin-bottom: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+  .report-card:hover { border-color: #004B93; }
+  .report-card-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+  .report-card-icon { width: 36px; height: 36px; border-radius: 8px; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .report-card-info { flex: 1; }
+  .report-card-info h3 { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .report-card-info p { font-size: 12px; color: #888; margin-top: 2px; }
+  .report-badges { display: flex; gap: 6px; flex-wrap: wrap; }
+  .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-ok { background: #EAF3DE; color: #3B6D11; }
+  .badge-fail { background: #FCEBEB; color: #A32D2D; }
+  .badge-na { background: #f3f3f3; color: #888; }
+  .report-detail { display: none; padding: 0 18px 16px; border-top: 1px solid #f0f0f0; }
+  .report-detail.open { display: block; }
+  .detail-section { margin-top: 12px; }
+  .detail-section h4 { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .detail-items { display: flex; flex-direction: column; gap: 4px; }
+  .detail-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333; }
+  .detail-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .dot-ok { background: #639922; }
+  .dot-fail { background: #E24B4A; }
+  .dot-na { background: #bbb; }
+  .dot-null { background: #e0e0e0; }
+  .detail-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 8px; }
+  .detail-photo { border-radius: 8px; overflow: hidden; aspect-ratio: 1; border: 1px solid #e4e4e4; }
+  .detail-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .detail-photo-label { font-size: 11px; color: #888; padding: 4px 6px; background: #fff; border-top: 1px solid #f0f0f0; }
+  .detail-obs { font-size: 13px; color: #555; background: #fafafa; border-radius: 8px; padding: 10px 12px; margin-top: 6px; }
+  .detail-sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+  .detail-sig { background: #fafafa; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #f0f0f0; }
+  .detail-sig img { max-width: 100%; border-radius: 4px; }
+  .detail-sig p { font-size: 11px; color: #888; margin-top: 4px; }
+  .sending-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 12px; font-size: 15px; color: #004B93; font-weight: 500; display: none; }
+  .spinner { width: 36px; height: 36px; border: 3px solid #e4e4e4; border-top-color: #004B93; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #004B93; color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 1000; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,75,147,0.3); }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast.error { background: #A32D2D; }
+  .btn-delete { font-size: 11px; color: #A32D2D; background: none; border: 1px solid #f0c0c0; padding: 5px 10px; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+  .btn-delete:hover { background: #FCEBEB; border-color: #E24B4A; }
+  .btn-delete-all { font-size: 13px; color: #A32D2D; background: #FCEBEB; border: 1px solid #f0c0c0; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; margin-bottom: 16px; transition: all 0.12s; width: 100%; }
+  .btn-delete-all:hover { background: #f7c1c1; border-color: #E24B4A; }
+  .pin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1001; }
+  .pin-overlay.show { display: flex; }
+  .pin-modal { background: #fff; border-radius: 16px; padding: 24px; width: 300px; max-width: 90vw; }
+  .pin-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #1a1a1a; }
+  .pin-modal p { font-size: 13px; color: #888; margin-bottom: 16px; }
+  .pin-input { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 14px; font-size: 22px; text-align: center; letter-spacing: 8px; font-family: inherit; margin-bottom: 8px; }
+  .pin-input:focus { outline: none; border-color: #004B93; }
+  .pin-error { font-size: 12px; color: #A32D2D; margin-bottom: 10px; display: none; text-align: center; }
+  .pin-error.show { display: block; }
+  .pin-actions { display: flex; gap: 8px; margin-top: 8px; }
+  .pin-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.12s; }
+  .pin-btn-cancel { background: #f3f3f3; color: #666; }
+  .pin-btn-confirm { background: #A32D2D; color: #fff; }
+  .pin-btn-cancel:hover { background: #e8e8e8; }
+  .pin-btn-confirm:hover { opacity: 0.9; }
+
+  /* KPI Dashboard */
+  .kpi-lock { text-align: center; padding: 40px 20px; background: #fff; border-radius: 14px; border: 1px solid #e4e4e4; }
+  .kpi-lock .icon { font-size: 40px; margin-bottom: 12px; }
+  .kpi-lock h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+  .kpi-lock p { font-size: 13px; color: #888; margin-bottom: 16px; }
+  .kpi-turno-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .kpi-turno-btn { padding: 10px 20px; border-radius: 10px; border: 1.5px solid #ddd; background: #fafafa; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .kpi-turno-btn:hover { border-color: #004B93; background: #f0f5ff; color: #004B93; }
+  .kpi-turno-btn.admin { background: #004B93; color: #fff; border-color: #004B93; }
+  .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
+  .kpi-header h2 { font-size: 16px; font-weight: 600; color: #004B93; }
+  .kpi-logout { font-size: 12px; color: #888; background: none; border: 1px solid #ddd; padding: 5px 12px; border-radius: 7px; cursor: pointer; font-family: inherit; }
+  .kpi-logout:hover { color: #333; border-color: #bbb; }
+  .kpi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 400px) { .kpi-cards { grid-template-columns: 1fr; } }
+  .kpi-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px; text-align: center; }
+  .kpi-card .kpi-val { font-size: 32px; font-weight: 600; margin: 4px 0; }
+  .kpi-card .kpi-lbl { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
+  .kpi-card .kpi-sub { font-size: 12px; color: #aaa; margin-top: 4px; }
+  .kpi-section { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+  .kpi-section h3 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 14px; }
+  .kpi-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .kpi-row:last-child { margin-bottom: 0; }
+  .kpi-row-label { font-size: 13px; color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .kpi-bar-wrap { width: 120px; height: 8px; background: #f0f0f0; border-radius: 4px; flex-shrink: 0; }
+  .kpi-bar { height: 8px; border-radius: 4px; background: #004B93; transition: width 0.4s; }
+  .kpi-bar.danger { background: #E24B4A; }
+  .kpi-bar.warning { background: #EF9F27; }
+  .kpi-bar.good { background: #639922; }
+  .kpi-pct { font-size: 12px; font-weight: 600; color: #333; width: 36px; text-align: right; flex-shrink: 0; }
+  .kpi-trend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
+  .kpi-trend-item { background: #f8f9fa; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #f0f0f0; }
+  .kpi-trend-item .t-val { font-size: 16px; font-weight: 600; color: #004B93; }
+  .kpi-trend-item .t-lbl { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .kpi-filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .kpi-filter-row select { border: 1px solid #ddd; border-radius: 8px; padding: 7px 10px; font-size: 13px; background: #fafafa; font-family: inherit; color: #333; flex: 1; min-width: 120px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .kpi-empty { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
+  .badge-turno-a { background: #e8f0fe; color: #004B93; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-turno-b { background: #FFF7E6; color: #BA7517; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  @media print { body { background: #fff; } .tabs, .btn-submit, .btn-ghost, .photo-upload-btn, .photo-remove, .sending-overlay, .pin-overlay { display: none !important; } .tab-content { display: block !important; } }
+
+  /* Hallazgos */
+  .hallazgos-view-btn { flex:1; padding:10px 16px; border-radius:10px; border:1.5px solid #ddd; background:#fafafa; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; color:#666; }
+  .hallazgos-view-btn.active { background:#004B93; color:#fff; border-color:#004B93; }
+  .hallazgo-card { background:#fff; border:1px solid #e4e4e4; border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .hallazgo-card.critico { border-left:4px solid #E24B4A; }
+  .hallazgo-card.reciente { border-left:4px solid #EF9F27; }
+  .hallazgo-card.cerrado { border-left:4px solid #639922; opacity:0.85; }
+  .hallazgo-header { padding:14px 16px; display:flex; align-items:flex-start; gap:12px; }
+  .hallazgo-dias { min-width:44px; height:44px; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; }
+  .hallazgo-dias.critico { background:#FCEBEB; }
+  .hallazgo-dias.reciente { background:#FFF7E6; }
+  .hallazgo-dias.cerrado { background:#EAF3DE; }
+  .hallazgo-dias .d-num { font-size:16px; font-weight:700; line-height:1; }
+  .hallazgo-dias.critico .d-num { color:#A32D2D; }
+  .hallazgo-dias.reciente .d-num { color:#BA7517; }
+  .hallazgo-dias.cerrado .d-num { color:#3B6D11; }
+  .hallazgo-dias .d-lbl { font-size:9px; color:#aaa; text-transform:uppercase; letter-spacing:0.3px; margin-top:1px; }
+  .hallazgo-info { flex:1; min-width:0; }
+  .hallazgo-info h3 { font-size:14px; font-weight:600; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hallazgo-info p { font-size:12px; color:#888; margin-top:2px; }
+  .hallazgo-desc { font-size:13px; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:0 16px 12px; }
+  .hallazgo-actions { padding:0 16px 14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+  .btn-resolver { padding:8px 16px; background:#004B93; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .btn-resolver:hover { opacity:0.9; }
+  .hallazgo-empty { text-align:center; padding:40px 20px; background:#fff; border-radius:14px; border:1px solid #e4e4e4; color:#aaa; font-size:14px; }
+  .btn-abrir-hallazgo { font-size:11px; color:#A32D2D; background:#FCEBEB; border:1px solid #f0c0c0; padding:5px 10px; border-radius:7px; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.12s; margin-left:6px; }
+  .btn-abrir-hallazgo:hover { background:#f7c1c1; }
+  .hallazgo-badge-count { background:#E24B4A; color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle; }
+</style>
+</head>
+<body>
+
+<div class="sending-overlay" id="sendingOverlay">
+  <div class="spinner"></div>
+  <span>Guardando revisión...</span>
+</div>
+
+<div class="page">
+  <div class="header">
+    <div class="logo"><span>SDX</span></div>
+    <div class="header-text">
+      <h1>Revisión de Áreas — Supervisores</h1>
+      <p>Sodexo @ ICU Medical &nbsp;·&nbsp; Servicio de limpieza y cafetería</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('form')" type="button">📋 Nueva revisión</button>
+    <button class="tab-btn" onclick="switchTab('history')" type="button">📂 Historial</button>
+    <button class="tab-btn" onclick="switchTab('hallazgos')" id="tab-btn-hallazgos" type="button">🔴 Hallazgos</button>
+    <button class="tab-btn" onclick="switchTab('kpi')" type="button">📊 KPIs</button>
+    <button class="tab-btn" onclick="switchTab('config')" type="button">⚙️ Config</button>
+  </div>
+
+  <!-- FORM TAB -->
+  <div class="tab-content active" id="tab-form">
+    <div class="meta-card">
+      <div class="meta-grid three">
+        <div class="field-group"><label>Fecha</label><input type="date" id="fecha" /></div>
+        <div class="field-group"><label>Turno</label>
+          <select id="turno"><option value="">Seleccionar</option><option>Turno A</option><option>Turno B</option></select>
+        </div>
+        <div class="field-group"><label>Supervisor</label>
+          <select id="supervisor">
+            <option value="">Seleccionar</option>
+            <option value="Douglas Aguilar">Douglas Aguilar</option>
+            <option value="Efrain Seas">Efrain Seas</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="area-selector-card">
+      <h2>Área a revisar</h2>
+      <div class="area-select-wrap">
+        <select id="areaSelect" onchange="loadArea()"><option value="">— Seleccione un área —</option></select>
+      </div>
+      <div id="categoryBadge" style="display:none;" class="category-badge">
+        <span id="categoryIcon"></span><span id="categoryName"></span>
+      </div>
+    </div>
+
+    <div class="summary-bar">
+      <div class="sum-item"><div class="val ok-color" id="cnt-ok">0</div><div class="lbl">Cumple</div></div>
+      <div class="sum-item"><div class="val fail-color" id="cnt-fail">0</div><div class="lbl">No cumple</div></div>
+      <div class="sum-item"><div class="val na-color" id="cnt-na">0</div><div class="lbl">N/A</div></div>
+    </div>
+
+    <div id="itemsContainer">
+      <div class="items-card"><div class="empty-state"><div class="icon">📋</div><p>Seleccione un área para cargar los ítems de revisión</p></div></div>
+    </div>
+
+    <div class="photos-card">
+      <h2>Evidencia fotográfica</h2>
+      <p>Adjunte hasta 10 fotos de hallazgos o del estado general del área</p>
+      <label for="photoInput" class="photo-upload-btn" id="uploadBtn">📷 &nbsp;Agregar foto</label>
+      <input type="file" id="photoInput" accept="image/*" multiple onchange="handlePhotos(event)" style="position:absolute;left:-9999px;opacity:0;" />
+      <div class="photos-grid" id="photosGrid"></div>
+      <div class="photo-count" id="photoCount" style="display:none;"></div>
+    </div>
+
+    <div class="signatures-grid">
+      <div class="signature-card">
+        <h2>Firma del supervisor</h2>
+        <p>Quien realizó la revisión</p>
+        <div class="sig-wrap" style="cursor:crosshair;"><canvas class="sig-canvas" id="sig1"></canvas><div class="sig-ph" id="ph1">Firme aquí</div></div>
+        <input class="sig-name-input" type="text" id="sigName1" placeholder="Nombre del supervisor" />
+        <button class="btn-ghost" onclick="clearSig(1)" type="button">Borrar firma</button>
+      </div>
+      <div class="signature-card">
+        <h2>Firma del responsable</h2>
+        <p>Persona a quien se revisó el área</p>
+        <div class="sig-wrap" style="cursor:crosshair;"><canvas class="sig-canvas" id="sig2"></canvas><div class="sig-ph" id="ph2">Firme aquí</div></div>
+        <input class="sig-name-input" type="text" id="sigName2" placeholder="Nombre del responsable" />
+        <button class="btn-ghost" onclick="clearSig(2)" type="button">Borrar firma</button>
+      </div>
+    </div>
+
+    <button class="btn-submit" id="submitBtn" onclick="submitForm()" type="button">✓ &nbsp;Guardar revisión</button>
+  </div>
+
+  <!-- HISTORY TAB -->
+  <div class="tab-content" id="tab-history">
+    <div class="history-filters">
+      <input type="text" id="filterText" placeholder="Buscar por área o supervisor..." oninput="renderHistory()" />
+      <select id="filterTurno" onchange="renderHistory()">
+        <option value="">Todos los turnos</option>
+        <option>Turno A</option>
+        <option>Turno B</option>
+      </select>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+  <!-- KPI TAB -->
+  <div class="tab-content" id="tab-kpi">
+    <div id="kpiLockScreen">
+      <div class="kpi-lock">
+        <div class="icon">📊</div>
+        <h2>Dashboard de KPIs</h2>
+        <p>Selecciona tu acceso para ver los indicadores correspondientes</p>
+        <div class="kpi-turno-btns">
+          <button class="kpi-turno-btn" onclick="requestKpiAccess('A')">🔵 Turno A</button>
+          <button class="kpi-turno-btn" onclick="requestKpiAccess('B')">🟠 Turno B</button>
+          <button class="kpi-turno-btn admin" onclick="requestKpiAccess('admin')">🔐 Administrador</button>
+        </div>
+      </div>
+    </div>
+    <div id="kpiDashboard" style="display:none;">
+      <div class="kpi-header">
+        <h2 id="kpiTitle">Dashboard</h2>
+        <button class="kpi-logout" onclick="logoutKpi()">Cerrar sesión</button>
+      </div>
+      <div class="kpi-filter-row" id="kpiAdminFilters" style="display:none;">
+        <select id="kpiTurnoFilter" onchange="renderKpi()">
+          <option value="">Todos los turnos</option>
+          <option value="Turno A">Turno A</option>
+          <option value="Turno B">Turno B</option>
+        </select>
+        <select id="kpiPeriodFilter" onchange="renderKpi()">
+          <option value="all">Todo el tiempo</option>
+          <option value="week">Esta semana</option>
+          <option value="month">Este mes</option>
+        </select>
+      </div>
+      <div class="kpi-filter-row" id="kpiMonthFilter">
+        <select id="kpiMonthSelect" onchange="renderKpi()" style="flex:1;">
+          <option value="">Todos los meses</option>
+        </select>
+      </div>
+      <div id="kpiContent"></div>
+    </div>
+  </div>
+
+  <!-- HALLAZGOS TAB -->
+  <div class="tab-content" id="tab-hallazgos">
+    <div style="display:flex; gap:8px; margin-bottom:16px;">
+      <button class="hallazgos-view-btn active" id="hv-abiertos" onclick="switchHallazgosView('abiertos')">🔴 Abiertos</button>
+      <button class="hallazgos-view-btn" id="hv-cerrados" onclick="switchHallazgosView('cerrados')">✅ Cerrados</button>
+    </div>
+    <div id="hallazgosContent"></div>
+  </div>
+
+  <!-- CONFIG TAB -->
+  <div class="tab-content" id="tab-config">
+    <div class="config-card">
+      <h2>Conexión con Google Sheets</h2>
+      <p>Pega aquí la URL de tu Google Apps Script Web App para activar el guardado en la nube.</p>
+      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveScriptUrl()" />
+      <div class="config-status" id="configStatus"></div>
+    </div>
+    <div class="config-card" style="margin-top:0;">
+      <h2>Instrucciones de configuración</h2>
+      <p style="margin-bottom:8px;">Sigue estos pasos una sola vez para activar el guardado en Google Sheets:</p>
+      <ol style="font-size:13px; color:#555; line-height:2; padding-left:18px;">
+        <li>Abre <strong>Google Drive</strong> y crea una hoja de cálculo nueva llamada <em>"Revisiones Sodexo"</em></li>
+        <li>En el menú de la hoja ve a <strong>Extensiones → Apps Script</strong></li>
+        <li>Borra el código que aparece y pega el código del archivo <strong>apps_script.gs</strong> que se adjunta</li>
+        <li>Haz clic en <strong>Guardar</strong> (ícono de disco)</li>
+        <li>Haz clic en <strong>Implementar → Nueva implementación</strong></li>
+        <li>Tipo: <strong>Aplicación web</strong> · Ejecutar como: <strong>Yo</strong> · Acceso: <strong>Cualquier usuario</strong></li>
+        <li>Haz clic en <strong>Implementar</strong> y autoriza los permisos</li>
+        <li>Copia la <strong>URL de la aplicación web</strong> y pégala arriba en el campo de configuración</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<div class="pin-overlay" id="pinOverlay">
+  <div class="pin-modal">
+    <h3>🔐 Acceso de administrador</h3>
+    <p id="pinDesc">Ingresa el PIN para continuar</p>
+    <input class="pin-input" type="password" id="pinInput" maxlength="6" placeholder="••••••" inputmode="numeric" />
+    <div class="pin-error" id="pinError">PIN incorrecto. Intenta de nuevo.</div>
+    <div class="pin-actions">
+      <button class="pin-btn pin-btn-cancel" onclick="closePin()">Cancelar</button>
+      <button class="pin-btn pin-btn-confirm" onclick="confirmPin()">Confirmar</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── DATOS ───────────────────────────────────────────────────────────────────
+const BANOS_ITEMS = [
+  "Pisos limpios y secos","Inodoros y urinarios desinfectados","Sanitarios limpios y desinfectados",
+  "Lavamanos limpios y operativos","Dispensadores de jabón abastecidos","Papel higiénico y toallas disponibles",
+  "Espejos y superficies sin manchas","Control de polvo en superficies","Basureros con bolsa y limpios",
+  "Sin malos olores","Paredes y divisiones limpias","Puertas principales limpias y sin manchas"
+];
+
+const categories = {
+  banos: { label:"Baños", icon:"🚻", items:[...BANOS_ITEMS] },
+  cafeteria_interna: { label:"Cafetería interna", icon:"☕", items:["Pisos limpios y sin residuos de comida","Sin derrames excesivos de líquidos en pisos","Paredes limpias y sin salpicaduras","Basureros con bolsa y sin desbordamiento","Control de polvo en superficies","Puertas principales limpias y sin manchas"] },
+  cafeteria_comedor: { label:"Cafetería (comedor)", icon:"🍽️", items:["Pisos limpios y sin residuos","Mesas y sillas desinfectadas","Microondas limpios por dentro y por fuera","Refrigeradores limpios por dentro y por fuera","Basureros con bolsa y sin desbordamiento","Limpieza de ventanales","Control de polvo en superficies","Puertas principales limpias y sin manchas"] },
+  commandcenter: { label:"Command Center", icon:"🖥️", items:["Pisos limpios y sin residuos","Escritorios y superficies sin polvo","Papeleras vaciadas","Control de polvo en superficies","Puertas principales limpias y sin manchas"] },
+  oficinas: { label:"Oficinas y cubículos", icon:"🏢", items:["Alfombra limpia y sin residuos","Escritorios y superficies sin polvo","Papeleras vaciadas","Control de polvo en superficies","Puertas principales limpias y sin manchas"] },
+  pasillos: { label:"Pasillos y circulación", icon:"🚶", items:["Pisos limpios y sin residuos","Libre de obstáculos","Señalización de seguridad visible","Pasamanos limpios","Puertas y marcos sin polvo ni manchas","Recolección de basura en basureros","Control de polvo en superficies"] },
+  pasillo_entradas_cc: { label:"Entradas command center", icon:"🚪", items:["Pisos limpios y sin residuos","Paredes limpias y sin manchas","Vidrios limpios y sin manchas","Turnstile (puertas eléctricas) limpias y sin residuos","Alfombras limpias y sin residuos","Control de polvo en superficies","Puertas principales limpias y sin manchas"] },
+  ceramico: { label:"Cerámico", icon:"🪟", items:["Pisos limpios y sin residuos","Control de polvo en paredes","Control de polvo en columnas","Ventanales limpios y sin manchas","Recolección de basura en basureros"] },
+  ventanales_lim: { label:"Ventanales LIM", icon:"🪟", items:["Limpieza de ventanales","Marcos de ventanas sin polvo","Ventanales sin marcas ni manchas","Control de polvo en superficies"] },
+  pasillo_1302: { label:"Pasillo 1302 a Facilidades", icon:"🚶", items:["Pisos limpios y sin residuos","Sin manchas en el piso","Limpieza de orillas y esquinas","Control de polvo en paredes","Control de polvo en rodapiés","Recolección de basura en basureros","Limpieza de andenes"] },
+  laboratorios: { label:"Laboratorios", icon:"🔬", items:["Recolección de basura en basureros","Limpieza de pisos","Limpieza de estaciones de trabajo","Control de polvo en superficies","Limpieza de ventanales","Limpieza de alfombras"] },
+  talleres: { label:"Talleres y mantenimiento", icon:"🔧", items:["Limpieza de pisos","Recolección de basura en basureros","Limpieza de estaciones de trabajo","Limpieza de ventanas","Control de polvo en superficies"] },
+  produccion_base: { label:"Producción / almacén", icon:"📦", items:["Limpieza de pisos","Recolección de basura en basureros","Limpieza de estaciones de trabajo","Control de polvo en superficies"] },
+  shipping: { label:"Shipping", icon:"📦", items:["Limpieza de pisos","Recolección de basura en basureros","Limpieza de estaciones de trabajo","Control de polvo en superficies","Limpieza de andenes"] },
+  centro_distribucion: { label:"Centro de distribución", icon:"📦", items:["Limpieza de pisos","Recolección de basura en basureros","Limpieza de estaciones de trabajo","Control de polvo en superficies","Limpieza de piso de racks","Control de polvo en racks"] },
+  racks: { label:"Racks", icon:"🗄️", items:["Limpieza de piso de racks","Piso no presenta hongo visible","Control de polvo en racks","Recolección de basura en basureros","Limpieza de bumpers amarillos"] },
+  retrabajos: { label:"Retrabajos", icon:"📦", items:["Limpieza de pisos","Control de polvo en superficies","Limpieza de estaciones de trabajo","Limpieza de puertas principales","Recolección de basura en basureros","Pulido de inoxidable"] },
+  bombas: { label:"Bombas", icon:"⚙️", items:["Limpieza de pisos","Limpieza de alfombras","Recolección de basura en basureros","Basureros no se encuentren llenos","Limpieza de ventanales","Limpieza de estaciones de trabajo","Control de polvo en paredes","Limpieza de alfombra Dycem"] },
+  tecnicas_base: { label:"Áreas técnicas", icon:"⚙️", items:["Limpieza de pisos","Recolección de basura en basureros","Control de polvo en superficies","No existan derrames de líquidos en el piso"] },
+  mold_solventes: { label:"Mold / Solventes", icon:"⚙️", items:["Limpieza de pisos","Control de polvo en superficies","Recolección de basura en basureros","Limpieza de ventanales"] },
+  mezanine: { label:"Mezanine", icon:"⚙️", items:["Limpieza de pisos","Recolección de basura en basureros","No existan derrames de agua","Limpieza de pasarelas","Limpieza de barandales"] },
+  gimnasio: { label:"Gimnasio", icon:"🏋️", items:["Limpieza de pisos","Limpieza de alfombra de ejercicios","Limpieza de ventanas","Limpieza de puertas principales","Recolección de basura en basureros","Limpieza de alfombras","Colocación de toallas y desinfectante",{section:"Baños del gimnasio"},...BANOS_ITEMS] },
+  juegos: { label:"Cuartos de juegos", icon:"🎮", items:["Limpieza de pisos","Recolección de basura en basureros","Control de polvo en superficies","Limpieza de ventanas","Futbolines limpios y desinfectados","Estaciones de descanso limpias","Sillas limpias"] },
+  exteriores: { label:"Exteriores", icon:"🌿", items:["Barrido de piso","Recolección de basura en basureros","No se vea basura visible","Orillas limpias","Ventanales sin manchas"] },
+  enfermeria: { label:"Enfermería", icon:"🏥", items:["Pisos limpios","Mostrador limpio y desinfectado","Mesas de trabajo limpias y desinfectadas","Recolección de basura en basureros","Camillas limpias","Control de polvo en superficies","Paredes desinfectadas",{section:"Baño de enfermería"},...BANOS_ITEMS] },
+  protocolo: { label:"Áreas clínicas", icon:"🏥", items:["Limpieza de pisos","Limpieza de estaciones de trabajo","Control de polvo en paredes","Recolección de basura en basureros"] },
+  lactancia: { label:"Cuarto lactancia", icon:"🏥", items:["Aspirado de alfombra","Recolección de basura en basureros","Limpieza de estaciones de trabajo","Limpieza de pileta inoxidable","Limpieza de puerta principal","Control de polvo en superficies"] },
+  salas: { label:"Salas de reunión", icon:"🪑", items:["Aspirado de alfombra","Recolección de basura en basureros","Pizarra limpia","Mesas limpias y desinfectadas","Sillas limpias sin polvo","Control de polvo en paredes","Limpieza de puerta principal"] },
+  kits: { label:"Desinfección y kits", icon:"🧴", items:["Torres de alcohol en gel con galón lleno","Torres de alcohol en gel limpias y sin polvo","Estación alcohol inalámbrica con alcohol y baterías","Estación alcohol inalámbrica limpia","Kits colocados en todos sus sitios y bien abastecidos","Pasamanos en general limpios","Impresoras limpias y desinfectadas","Mirillas de puertas principales limpias","Agarraderas de puertas limpias sin suciedad"] }
+};
+
+const areas = [
+  {name:"Baños hombres CR1",cat:"banos"},{name:"Baño mujeres CR1",cat:"banos"},{name:"Baño enfermería",cat:"banos"},
+  {name:"Baño mujeres CR2",cat:"banos"},{name:"Baño hombres CR2",cat:"banos"},{name:"Baño mujeres CR4",cat:"banos"},
+  {name:"Baño hombres CR4",cat:"banos"},{name:"Baño Facilidades hombres",cat:"banos"},{name:"Baño Facilidades mujeres",cat:"banos"},
+  {name:"Baño puesto 3",cat:"banos"},{name:"Cafetería interna",cat:"cafeteria_interna"},{name:"Cafetería CR1",cat:"cafeteria_comedor"},
+  {name:"Cafetería CR4",cat:"cafeteria_comedor"},{name:"Command center CR1",cat:"commandcenter"},{name:"Command center CR4",cat:"commandcenter"},
+  {name:"Oficina y cubículos EHS",cat:"oficinas"},{name:"Recepción",cat:"oficinas"},{name:"Oficina pour up",cat:"oficinas"},
+  {name:"Oficina shipping",cat:"oficinas"},{name:"Oficinas de puesto 3",cat:"oficinas"},{name:"Cubículos tercer nivel CR1",cat:"oficinas"},
+  {name:"Cubículos primer nivel CR1",cat:"oficinas"},{name:"Cubículos primer nivel CR4",cat:"oficinas"},{name:"Cubículos tercer nivel CR4",cat:"oficinas"},
+  {name:"Ingeniería diseño",cat:"oficinas"},{name:"Gradas por ascensor",cat:"pasillos"},{name:"Ascensor",cat:"pasillos"},
+  {name:"Gradas por Santa Rosa",cat:"pasillos"},{name:"Pasillo stock room",cat:"pasillos"},{name:"Pasillo de Facilidades a puesto 3",cat:"pasillos"},
+  {name:"Entradas de command center",cat:"pasillo_entradas_cc"},{name:"Cerámico",cat:"ceramico"},{name:"Ventanales LIM",cat:"ventanales_lim"},
+  {name:"Pasillo de 1302 hasta Facilidades",cat:"pasillo_1302"},{name:"Laboratorios CR4",cat:"laboratorios"},{name:"Stability Lab",cat:"laboratorios"},
+  {name:"Lab electrónica",cat:"laboratorios"},{name:"Laboratorio calibraciones",cat:"laboratorios"},{name:"Laboratorio BQ",cat:"laboratorios"},
+  {name:"Laboratorio MQ",cat:"laboratorios"},{name:"Laboratorio IQ",cat:"laboratorios"},{name:"Tool Room",cat:"talleres"},
+  {name:"Taller precisión",cat:"talleres"},{name:"Central de mantenimiento",cat:"talleres"},{name:"Stock room",cat:"produccion_base"},
+  {name:"Vertical lift",cat:"produccion_base"},{name:"Pour up",cat:"produccion_base"},{name:"Jaulas de puesto 3",cat:"produccion_base"},
+  {name:"Jaula label cage",cat:"produccion_base"},{name:"Shipping",cat:"shipping"},{name:"Centro de distribución",cat:"centro_distribucion"},
+  {name:"Racks CR1",cat:"racks"},{name:"Racks CR2",cat:"racks"},{name:"Retrabajos",cat:"retrabajos"},
+  {name:"Bombas",cat:"bombas"},{name:"Pump House",cat:"tecnicas_base"},{name:"Vacuum House",cat:"tecnicas_base"},
+  {name:"Utility Yard",cat:"tecnicas_base"},{name:"Facilidades",cat:"tecnicas_base"},{name:"Mold 0",cat:"mold_solventes"},
+  {name:"Solventes",cat:"mold_solventes"},{name:"Mezanine",cat:"mezanine"},{name:"Gimnasio",cat:"gimnasio"},
+  {name:"Cuartos de juegos",cat:"juegos"},{name:"Exteriores",cat:"exteriores"},{name:"Enfermería",cat:"enfermeria"},
+  {name:"Cuarto protocolo",cat:"protocolo"},{name:"Cuarto lactancia",cat:"lactancia"},
+  {name:"Salas de CR1 – Tercer nivel",cat:"salas"},{name:"Salas de CR1 – Segundo nivel",cat:"salas"},
+  {name:"Salas de CR1 – Primer nivel",cat:"salas"},{name:"Salas de CR4 – Tercer nivel",cat:"salas"},
+  {name:"Desinfección y colocación kits CR1",cat:"kits"},{name:"Desinfección y colocación kits CR2",cat:"kits"},
+  {name:"Desinfección y colocación kits CR4",cat:"kits"},{name:"Desinfección y colocación kits Facilidades",cat:"kits"}
+];
+
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let currentStates = {};
+let currentArea = null;
+let photos = [];
+const MAX_PHOTOS = 10;
+let reports = JSON.parse(localStorage.getItem("sdx_reports") || "[]");
+let scriptUrl = localStorage.getItem("sdx_script_url") || "https://script.google.com/macros/s/AKfycbz__KyGjP9EtUgYN8RXLyFsgZMJeRf1ny05scnPCVeaicIoR4a2KILs-w6ADEM-XjRq/exec";
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", ["form","history","hallazgos","kpi","config"][i]===tab));
+  document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
+  document.getElementById("tab-"+tab).classList.add("active");
+  if (tab === "history") { syncAndRenderHistory(); }
+  if (tab === "hallazgos") renderHallazgos();
+  if (tab === "kpi") initKpiTab();
+  if (tab === "config") {
+    document.getElementById("scriptUrl").value = scriptUrl;
+    updateConfigStatus();
+  }
+}
+
+// ─── CONFIG ───────────────────────────────────────────────────────────────────
+function saveScriptUrl() {
+  scriptUrl = document.getElementById("scriptUrl").value.trim();
+  localStorage.setItem("sdx_script_url", scriptUrl);
+  updateConfigStatus();
+}
+function updateConfigStatus() {
+  const el = document.getElementById("configStatus");
+  if (!scriptUrl) { el.className = "config-status"; return; }
+  if (scriptUrl.startsWith("https://script.google.com")) {
+    el.className = "config-status ok"; el.textContent = "✓ URL configurada correctamente";
+  } else {
+    el.className = "config-status err"; el.textContent = "⚠ La URL no parece válida. Verifica que sea de Google Apps Script.";
+  }
+}
+
+// ─── SELECT ───────────────────────────────────────────────────────────────────
+function buildSelect() {
+  const sel = document.getElementById("areaSelect");
+  areas.forEach((a,i) => { const o = document.createElement("option"); o.value=i; o.textContent=a.name; sel.appendChild(o); });
+}
+
+function loadArea() {
+  const idx = document.getElementById("areaSelect").value;
+  if (idx==="") {
+    document.getElementById("itemsContainer").innerHTML=`<div class="items-card"><div class="empty-state"><div class="icon">📋</div><p>Seleccione un área para cargar los ítems de revisión</p></div></div>`;
+    document.getElementById("categoryBadge").style.display="none"; updateSummary(); return;
+  }
+  currentArea=parseInt(idx);
+  const area=areas[currentArea], cat=categories[area.cat];
+  document.getElementById("categoryBadge").style.display="inline-flex";
+  document.getElementById("categoryIcon").textContent=cat.icon;
+  document.getElementById("categoryName").textContent=cat.label;
+  const flatItems=cat.items.filter(i=>typeof i==="string");
+  if (!currentStates[currentArea]) {
+    currentStates[currentArea]={items:{},obs:""};
+    flatItems.forEach((_,i)=>{ currentStates[currentArea].items[i]=null; });
+  }
+  renderItems(area,cat); updateSummary();
+}
+
+function renderItems(area,cat) {
+  const saved=currentStates[currentArea];
+  let rows="", itemIdx=0;
+  cat.items.forEach(item=>{
+    if (typeof item==="object"&&item.section) {
+      rows+=`<tr><td colspan="4" class="section-divider">${item.section}</td></tr>`;
+    } else {
+      const s=saved.items[itemIdx], i=itemIdx;
+      const isFail = s === 'fail';
+      rows+=`<tr id="row-${currentArea}-${i}">
+        <td style="vertical-align:middle;">
+          ${item}
+          ${isFail ? `<br><button class="btn-abrir-hallazgo" onclick="promptAbrirHallazgo(${currentArea},${i})">+ Abrir hallazgo</button>` : ""}
+        </td>
+        <td><div class="radio-group"><div class="radio-opt ${s==='ok'?'ok':''}" onclick="setStatus(${currentArea},${i},'ok',this)">✓</div></div></td>
+        <td><div class="radio-group"><div class="radio-opt ${s==='fail'?'fail':''}" onclick="setStatus(${currentArea},${i},'fail',this)">✗</div></div></td>
+        <td><div class="radio-group"><div class="radio-opt ${s==='na'?'na':''}" onclick="setStatus(${currentArea},${i},'na',this)">—</div></div></td>
+      </tr>`; itemIdx++;
+    }
+  });
+  document.getElementById("itemsContainer").innerHTML=`
+    <div class="items-card">
+      <div class="items-card-header"><h2>Ítems de revisión — ${area.name}</h2></div>
+      <table class="items-table">
+        <thead><tr><th style="width:54%">Criterio de revisión</th><th class="center" style="width:16%">Cumple</th><th class="center" style="width:16%">No cumple</th><th class="center" style="width:14%">N/A</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <div class="obs-wrap">
+        <span class="obs-label">Observaciones del área</span>
+        <textarea id="obsField" placeholder="Anotar hallazgos, acciones correctivas o comentarios..." onchange="saveObs()">${saved.obs}</textarea>
+      </div>
+    </div>`;
+}
+
+function promptAbrirHallazgo(areaIdx, itemIdx) {
+  const area = areas[areaIdx];
+  const cat = categories[area.cat];
+  const flatItems = cat.items.filter(i => typeof i === "string");
+  const itemName = flatItems[itemIdx];
+  const supervisor = document.getElementById("supervisor").value.trim();
+  const fecha = document.getElementById("fecha").value;
+  if (!supervisor) { showToast("Ingresa el nombre del supervisor primero", "error"); return; }
+  abrirHallazgo(area.name, itemName, supervisor, fecha);
+}
+
+function setStatus(areaIdx,itemIdx,status,el) {
+  if (!currentStates[areaIdx]) return;
+  const prev=currentStates[areaIdx].items[itemIdx];
+  if (prev===status) { currentStates[areaIdx].items[itemIdx]=null; }
+  else { currentStates[areaIdx].items[itemIdx]=status; }
+  const area=areas[areaIdx], cat=categories[area.cat];
+  renderItems(area,cat);
+  updateSummary();
+}
+function saveObs() { if(currentArea===null)return; const o=document.getElementById("obsField"); if(o)currentStates[currentArea].obs=o.value; }
+function updateSummary() {
+  let ok=0,fail=0,na=0;
+  Object.values(currentStates).forEach(a=>Object.values(a.items).forEach(v=>{ if(v==="ok")ok++; else if(v==="fail")fail++; else if(v==="na")na++; }));
+  document.getElementById("cnt-ok").textContent=ok;
+  document.getElementById("cnt-fail").textContent=fail;
+  document.getElementById("cnt-na").textContent=na;
+}
+
+// ─── PHOTOS ───────────────────────────────────────────────────────────────────
+function compressImage(file, callback) {
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = new Image();
+    img.onload = () => {
+      const MAX_W = 1024, MAX_H = 1024;
+      let w = img.width, h = img.height;
+      if (w > MAX_W || h > MAX_H) {
+        const ratio = Math.min(MAX_W/w, MAX_H/h);
+        w = Math.round(w * ratio); h = Math.round(h * ratio);
+      }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      canvas.getContext("2d").drawImage(img, 0, 0, w, h);
+      callback(canvas.toDataURL("image/jpeg", 0.7));
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function handlePhotos(e) {
+  const files=Array.from(e.target.files), remaining=MAX_PHOTOS-photos.length;
+  files.slice(0,remaining).forEach(file=>{
+    compressImage(file, compressed => {
+      photos.push({src:compressed, label:""}); renderPhotos();
+    });
+  });
+  e.target.value="";
+}
+function renderPhotos() {
+  const grid=document.getElementById("photosGrid"),btn=document.getElementById("uploadBtn"),countEl=document.getElementById("photoCount");
+  grid.innerHTML="";
+  photos.forEach((p,i)=>{ const d=document.createElement("div"); d.className="photo-thumb"; d.innerHTML=`<img src="${p.src}" alt="Foto ${i+1}"/><button class="photo-remove" onclick="removePhoto(${i})" type="button">✕</button><input class="photo-label-input" type="text" placeholder="Descripción..." value="${p.label}" oninput="photos[${i}].label=this.value"/>`; grid.appendChild(d); });
+  const full=photos.length>=MAX_PHOTOS;
+  btn.classList.toggle("disabled",full);
+  countEl.style.display=photos.length>0?"block":"none";
+  countEl.textContent=`${photos.length} de ${MAX_PHOTOS} fotos adjuntas`;
+}
+function removePhoto(idx){ photos.splice(idx,1); renderPhotos(); }
+
+// ─── SIGNATURES ───────────────────────────────────────────────────────────────
+const sigs={};
+function initSig(n){
+  const canvas=document.getElementById("sig"+n), dpr=window.devicePixelRatio||1;
+  canvas.width=canvas.offsetWidth*dpr; canvas.height=110*dpr;
+  const ctx=canvas.getContext("2d"); ctx.scale(dpr,dpr);
+  ctx.strokeStyle="#004B93"; ctx.lineWidth=2; ctx.lineCap="round"; ctx.lineJoin="round";
+  sigs[n]={ctx,drawing:false,hasData:false};
+  const pos=e=>{ const r=canvas.getBoundingClientRect(),s=e.touches?e.touches[0]:e; return{x:s.clientX-r.left,y:s.clientY-r.top}; };
+  canvas.addEventListener("pointerdown",e=>{ sigs[n].drawing=true; sigs[n].hasData=true; const p=pos(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); document.getElementById("ph"+n).style.display="none"; });
+  canvas.addEventListener("pointermove",e=>{ if(!sigs[n].drawing)return; const p=pos(e); ctx.lineTo(p.x,p.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(p.x,p.y); });
+  ["pointerup","pointerleave","pointercancel"].forEach(ev=>canvas.addEventListener(ev,()=>{ sigs[n].drawing=false; }));
+}
+function clearSig(n){ const c=document.getElementById("sig"+n); sigs[n].ctx.clearRect(0,0,c.width,c.height); sigs[n].hasData=false; document.getElementById("ph"+n).style.display="block"; }
+
+// ─── SUBMIT ───────────────────────────────────────────────────────────────────
+async function submitForm() {
+  const fecha=document.getElementById("fecha").value;
+  const supervisor=document.getElementById("supervisor").value.trim();
+  const turno=document.getElementById("turno").value;
+  const areaIdx=document.getElementById("areaSelect").value;
+  if (!fecha||!supervisor||!turno) { showToast("Completa fecha, turno y nombre del supervisor","error"); return; }
+  if (areaIdx==="") { showToast("Selecciona un área antes de guardar","error"); return; }
+
+  saveObs();
+  const area=areas[parseInt(areaIdx)];
+  const cat=categories[area.cat];
+  const flatItems=cat.items.filter(i=>typeof i==="string");
+  const sig1=document.getElementById("sig1").toDataURL();
+  const sig2=document.getElementById("sig2").toDataURL();
+
+  const report = {
+    id: Date.now(),
+    fecha, turno, supervisor,
+    area: area.name,
+    categoria: cat.label,
+    icono: cat.icon,
+    items: flatItems.map((name,i)=>({ name, status: currentStates[currentArea]?.items[i]||null })),
+    observaciones: currentStates[currentArea]?.obs||"",
+    photos: photos.map(p=>({src:p.src,label:p.label})),
+    sig1, sig2,
+    sigName1: document.getElementById("sigName1").value,
+    sigName2: document.getElementById("sigName2").value,
+    ok: Object.values(currentStates[currentArea]?.items||{}).filter(v=>v==="ok").length,
+    fail: Object.values(currentStates[currentArea]?.items||{}).filter(v=>v==="fail").length,
+    na: Object.values(currentStates[currentArea]?.items||{}).filter(v=>v==="na").length
+  };
+
+  // Save locally
+  reports.unshift(report);
+  localStorage.setItem("sdx_reports", JSON.stringify(reports));
+
+  // Send to Google Sheets if configured
+  if (scriptUrl && scriptUrl.startsWith("https://script.google.com")) {
+    document.getElementById("sendingOverlay").style.display="flex";
+    document.getElementById("submitBtn").disabled=true;
+    const saved = await sendToSheets(report);
+    if (saved) {
+      showToast("Revisión guardada en Google Sheets ✓");
+    } else {
+      showToast("Guardado local ✓ — sin conexión a Sheets");
+    }
+    document.getElementById("sendingOverlay").style.display="none";
+    document.getElementById("submitBtn").disabled=false;
+  } else {
+    showToast("Revisión guardada localmente ✓");
+  }
+
+  // Reset form
+  resetForm();
+}
+
+function resetForm() {
+  currentArea=null; currentStates={}; photos=[];
+  document.getElementById("areaSelect").value="";
+  document.getElementById("supervisor").value="";
+  document.getElementById("turno").value="";
+  document.getElementById("fecha").value=new Date().toISOString().split("T")[0];
+  document.getElementById("sigName1").value="";
+  document.getElementById("sigName2").value="";
+  clearSig(1); clearSig(2);
+  renderPhotos();
+  updateSummary();
+  document.getElementById("itemsContainer").innerHTML=`<div class="items-card"><div class="empty-state"><div class="icon">📋</div><p>Seleccione un área para cargar los ítems de revisión</p></div></div>`;
+  document.getElementById("categoryBadge").style.display="none";
+}
+
+// ─── SYNC ─────────────────────────────────────────────────────────────────────
+// ─── SEND TO SHEETS (compatible con móvil — usa GET para evitar CORS) ─────────
+// ─── SEND TO SHEETS (iframe — compatible con Chrome Android) ──────────────────
+function sendToSheets(report) {
+  return new Promise((resolve) => {
+    if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) {
+      resolve(false); return;
+    }
+    try {
+      const payload = {
+        action:        "save_main",
+        id:            String(report.id),
+        fecha:         report.fecha,
+        turno:         report.turno,
+        supervisor:    report.supervisor,
+        area:          report.area,
+        categoria:     report.categoria,
+        icono:         report.icono,
+        ok:            report.ok,
+        fail:          report.fail,
+        na:            report.na,
+        observaciones: report.observaciones || "",
+        sigName1:      report.sigName1 || "",
+        sigName2:      report.sigName2 || "",
+        items:         JSON.stringify(report.items || [])
+      };
+
+      // Crear formulario oculto que hace POST real sin restricciones CORS
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = scriptUrl;
+      form.target = "_sdx_iframe_" + report.id;
+      form.style.display = "none";
+
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "payload";
+      input.value = JSON.stringify(payload);
+      form.appendChild(input);
+
+      // iframe oculto como destino del form
+      const iframe = document.createElement("iframe");
+      iframe.name = form.target;
+      iframe.style.display = "none";
+      iframe.onload = () => {
+        setTimeout(() => {
+          form.remove();
+          iframe.remove();
+        }, 2000);
+        // Subir media en segundo plano
+        uploadMediaBackground(report);
+        clearPending(report.id);
+        resolve(true);
+      };
+      iframe.onerror = () => {
+        form.remove(); iframe.remove();
+        markPending(report.id);
+        resolve(false);
+      };
+      // Timeout de seguridad
+      setTimeout(() => {
+        if (document.body.contains(iframe)) {
+          form.remove(); iframe.remove();
+          uploadMediaBackground(report);
+          clearPending(report.id);
+          resolve(true); // asumir éxito si no hubo error explícito
+        }
+      }, 8000);
+
+      document.body.appendChild(iframe);
+      document.body.appendChild(form);
+      form.submit();
+    } catch(e) {
+      markPending(report.id);
+      resolve(false);
+    }
+  });
+}
+
+// Sube fotos y firmas en segundo plano
+async function uploadMediaBackground(report) {
+  if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) return;
+  const id = String(report.id);
+  try {
+    for (let i = 0; i < (report.photos||[]).length; i++) {
+      const p = report.photos[i];
+      await fetchPost({ action:"save_photo", id, photo_index:i, label:p.label||"", src:p.src||"" });
+    }
+    for (const tipo of ["sig1","sig2"]) {
+      await fetchPost({ action:"save_sig", id, tipo, data: report[tipo]||"" });
+    }
+  } catch(e) { /* silencioso */ }
+}
+
+async function fetchPost(payload) {
+  return fetch(scriptUrl, { method:"POST", body: JSON.stringify(payload) });
+}
+
+function markPending(id) {
+  let pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+  if (!pending.includes(String(id))) pending.push(String(id));
+  localStorage.setItem("sdx_pending", JSON.stringify(pending));
+}
+
+function clearPending(id) {
+  let pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+  pending = pending.filter(x => x !== String(id));
+  localStorage.setItem("sdx_pending", JSON.stringify(pending));
+}
+
+// ─── SYNC ─────────────────────────────────────────────────────────────────────
+async function syncAndRenderHistory() {
+  renderHistory();
+  if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) return;
+
+  const list = document.getElementById("historyList");
+  const syncBar = document.createElement("div");
+  syncBar.id = "syncBar";
+  syncBar.style.cssText = "background:#e8f0fe;color:#004B93;font-size:12px;font-weight:500;padding:8px 14px;border-radius:10px;margin-bottom:12px;display:flex;align-items:center;gap:8px;";
+  syncBar.innerHTML = `<span style="display:inline-block;width:12px;height:12px;border:2px solid #c0cfe8;border-top-color:#004B93;border-radius:50%;animation:spin 0.7s linear infinite;"></span> Sincronizando con Google Sheets...`;
+  list.insertAdjacentElement("beforebegin", syncBar);
+
+  try {
+    // 1. Reintentar enviar revisiones pendientes locales
+    const pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+    for (const pid of pending) {
+      const r = reports.find(x => String(x.id) === pid);
+      if (r) {
+        try {
+          await fetch(scriptUrl, { method: "POST", body: JSON.stringify(r) });
+          clearPending(pid);
+        } catch(e) {}
+      }
+    }
+
+    // 2. Traer todas las revisiones de Sheets
+    const res = await fetch(scriptUrl + "?action=getReports");
+    const data = await res.json();
+
+    if (Array.isArray(data) && data.length > 0) {
+      const localMap = {};
+      reports.forEach(r => { localMap[String(r.id)] = r; });
+
+      data.forEach(remote => {
+        const rid = String(remote.id);
+        const local = localMap[rid];
+        // Si no existe localmente, agregar
+        if (!local) {
+          reports.push(remote);
+        } else {
+          // Si existe pero le faltan items/fotos/firmas (vino del script viejo), actualizar
+          const missingItems  = !local.items  || local.items.length  === 0;
+          const missingSigs   = !local.sig1   || local.sig1 === "";
+          if (missingItems || missingSigs) {
+            Object.assign(local, remote);
+          }
+        }
+      });
+
+      reports.sort((a,b) => b.id - a.id);
+      localStorage.setItem("sdx_reports", JSON.stringify(reports));
+
+      syncBar.style.background = "#EAF3DE";
+      syncBar.style.color = "#3B6D11";
+      syncBar.innerHTML = `✓ Sincronizado — ${data.length} revisiones en total`;
+    } else {
+      syncBar.style.background = "#EAF3DE";
+      syncBar.style.color = "#3B6D11";
+      syncBar.innerHTML = `✓ Sin revisiones nuevas`;
+    }
+    renderHistory();
+  } catch(e) {
+    syncBar.style.background = "#fff7e6";
+    syncBar.style.color = "#BA7517";
+    syncBar.innerHTML = `⚠ Sin conexión a Sheets — mostrando datos locales`;
+  }
+  setTimeout(() => syncBar.remove(), 5000);
+}
+
+// ─── HISTORY ──────────────────────────────────────────────────────────────────
+function renderHistory() {
+  const list=document.getElementById("historyList");
+  const txt=(document.getElementById("filterText")?.value||"").toLowerCase();
+  const turnoF=document.getElementById("filterTurno")?.value||"";
+  let filtered=reports.map((r,globalIdx)=>({...r, globalIdx})).filter(r=>{
+    const matchTxt=!txt||(r.area.toLowerCase().includes(txt)||r.supervisor.toLowerCase().includes(txt));
+    const matchTurno=!turnoF||r.turno===turnoF;
+    return matchTxt&&matchTurno;
+  });
+  if (!filtered.length) { list.innerHTML=`<div class="history-empty"><div style="font-size:32px;margin-bottom:8px">📭</div><p>No hay revisiones guardadas aún</p></div>`; return; }
+  let html=`<button class="btn-delete-all" onclick="requestDeleteAll()">🗑 Borrar todo el historial</button>`;
+  html+=filtered.map((r,i)=>`
+    <div class="report-card">
+      <div class="report-card-header" onclick="toggleReport('hist-${i}')">
+        <div class="report-card-icon">${r.icono}</div>
+        <div class="report-card-info">
+          <h3>${r.area}</h3>
+          <p>${r.fecha} &nbsp;·&nbsp; ${r.turno} &nbsp;·&nbsp; ${r.supervisor}</p>
+        </div>
+        <div class="report-badges">
+          <span class="badge badge-ok">✓ ${r.ok}</span>
+          <span class="badge badge-fail">✗ ${r.fail}</span>
+          ${r.na>0?`<span class="badge badge-na">— ${r.na}</span>`:""}
+          <button class="btn-delete" onclick="event.stopPropagation();requestDeleteOne(${r.globalIdx})">Borrar</button>
+        </div>
+      </div>
+      <div class="report-detail" id="hist-${i}">
+        <div class="detail-section">
+          <h4>Ítems revisados</h4>
+          <div class="detail-items">
+            ${r.items.map(it=>`<div class="detail-item"><div class="detail-dot dot-${it.status||'null'}"></div>${it.name}</div>`).join("")}
+          </div>
+        </div>
+        ${r.observaciones?`<div class="detail-section"><h4>Observaciones</h4><div class="detail-obs">${r.observaciones}</div></div>`:""}
+        ${r.photos&&r.photos.length?`<div class="detail-section"><h4>Fotos (${r.photos.length})</h4><div class="detail-photos">${r.photos.map(p=>`<div class="detail-photo"><img src="${p.src}" />${p.label?`<div class="detail-photo-label">${p.label}</div>`:""}</div>`).join("")}</div></div>`:""}
+        <div class="detail-section"><h4>Firmas</h4>
+          <div class="detail-sigs">
+            <div class="detail-sig"><img src="${r.sig1}" /><p>${r.sigName1||"Supervisor"}</p></div>
+            <div class="detail-sig"><img src="${r.sig2}" /><p>${r.sigName2||"Responsable"}</p></div>
+          </div>
+        </div>
+        <div style="padding:12px 0 4px;">
+          <button onclick="exportPdf(${r.id})" style="width:100%;padding:12px;background:#004B93;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+            📄 &nbsp;Exportar revisión a PDF
+          </button>
+        </div>
+      </div>
+    </div>`).join("");
+  list.innerHTML=html;
+}
+
+function toggleReport(id) {
+  const el=document.getElementById(id);
+  if (el) el.classList.toggle("open");
+}
+
+// ─── PIN & DELETE ─────────────────────────────────────────────────────────────
+const ADMIN_PIN = "041218";
+let pendingAction = null;
+
+function requestDeleteOne(id) {
+  pendingAction = () => deleteOne(id);
+  document.getElementById("pinDesc").textContent = "Ingresa el PIN para borrar esta revisión";
+  openPin();
+}
+
+function requestDeleteAll() {
+  pendingAction = () => deleteAll();
+  document.getElementById("pinDesc").textContent = "Ingresa el PIN para borrar todo el historial";
+  openPin();
+}
+
+function openPin() {
+  document.getElementById("pinInput").value = "";
+  document.getElementById("pinError").classList.remove("show");
+  document.getElementById("pinOverlay").classList.add("show");
+  setTimeout(() => document.getElementById("pinInput").focus(), 100);
+}
+
+function closePin() {
+  document.getElementById("pinOverlay").classList.remove("show");
+  pendingAction = null;
+  pendingKpiPin = null;
+}
+
+document.addEventListener("keydown", e => {
+  if (e.key === "Enter" && document.getElementById("pinOverlay").classList.contains("show")) confirmPin();
+  if (e.key === "Escape" && document.getElementById("pinOverlay").classList.contains("show")) closePin();
+});
+
+function deleteOne(globalIdx) {
+  reports.splice(globalIdx, 1);
+  localStorage.setItem("sdx_reports", JSON.stringify(reports));
+  showToast("Revisión eliminada");
+  renderHistory();
+}
+
+function deleteAll() {
+  reports = [];
+  localStorage.setItem("sdx_reports", JSON.stringify(reports));
+  showToast("Historial eliminado");
+  renderHistory();
+}
+
+
+// ─── KPI ──────────────────────────────────────────────────────────────────────
+const PIN_TURNO_A = "123456";
+const PIN_TURNO_B = "987654";
+let kpiSession = null; // 'A', 'B', or 'admin'
+
+function initKpiTab() {
+  if (!kpiSession) {
+    document.getElementById("kpiLockScreen").style.display = "block";
+    document.getElementById("kpiDashboard").style.display = "none";
+  } else {
+    populateMonthFilter();
+    renderKpi();
+  }
+}
+
+function populateMonthFilter() {
+  const sel = document.getElementById("kpiMonthSelect");
+  const current = sel.value;
+  const months = [...new Set(reports.map(r => r.fecha ? r.fecha.substring(0,7) : null).filter(Boolean))].sort().reverse();
+  const monthNames = {"01":"Enero","02":"Febrero","03":"Marzo","04":"Abril","05":"Mayo","06":"Junio","07":"Julio","08":"Agosto","09":"Setiembre","10":"Octubre","11":"Noviembre","12":"Diciembre"};
+  sel.innerHTML = '<option value="">Todos los meses</option>';
+  months.forEach(m => {
+    const [yr, mo] = m.split("-");
+    const opt = document.createElement("option");
+    opt.value = m;
+    opt.textContent = (monthNames[mo] || mo) + " " + yr;
+    if (m === current) opt.selected = true;
+    sel.appendChild(opt);
+  });
+}
+
+function requestKpiAccess(type) {
+  const pinMap = { A: PIN_TURNO_A, B: PIN_TURNO_B, admin: ADMIN_PIN };
+  const labelMap = { A: "PIN de Turno A", B: "PIN de Turno B", admin: "PIN de administrador" };
+  pendingAction = () => {
+    kpiSession = type;
+    document.getElementById("kpiLockScreen").style.display = "none";
+    document.getElementById("kpiDashboard").style.display = "block";
+    document.getElementById("kpiAdminFilters").style.display = type === "admin" ? "flex" : "none";
+    document.getElementById("kpiMonthFilter").style.display = "flex";
+    document.getElementById("kpiTitle").textContent = type === "admin" ? "Dashboard — Administrador" : "Dashboard — Turno " + type;
+    populateMonthFilter();
+    renderKpi();
+  };
+  document.getElementById("pinDesc").textContent = "Ingresa el " + labelMap[type];
+  pendingKpiPin = pinMap[type];
+  openPin();
+}
+
+let pendingKpiPin = null;
+
+function confirmPin() {
+  const entered = document.getElementById("pinInput").value.trim();
+  const correctPin = pendingKpiPin || ADMIN_PIN;
+  if (entered === correctPin) {
+    const action = pendingAction;
+    pendingAction = null;
+    pendingKpiPin = null;
+    document.getElementById("pinOverlay").classList.remove("show");
+    if (action) action();
+  } else {
+    document.getElementById("pinError").classList.add("show");
+    document.getElementById("pinInput").value = "";
+    document.getElementById("pinInput").focus();
+  }
+}
+
+function logoutKpi() {
+  kpiSession = null;
+  document.getElementById("kpiLockScreen").style.display = "block";
+  document.getElementById("kpiDashboard").style.display = "none";
+}
+
+function getKpiData() {
+  let data = [...reports];
+  if (kpiSession !== "admin") {
+    data = data.filter(r => r.turno === "Turno " + kpiSession);
+  } else {
+    const turnoF = document.getElementById("kpiTurnoFilter")?.value || "";
+    if (turnoF) data = data.filter(r => r.turno === turnoF);
+    const period = document.getElementById("kpiPeriodFilter")?.value || "all";
+    if (period !== "all") {
+      const now = new Date();
+      data = data.filter(r => {
+        const d = new Date(r.fecha);
+        if (period === "week") {
+          const weekAgo = new Date(now); weekAgo.setDate(now.getDate() - 7);
+          return d >= weekAgo;
+        } else if (period === "month") {
+          return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+        }
+        return true;
+      });
+    }
+  }
+  // Filtro de mes para todos los usuarios
+  const monthF = document.getElementById("kpiMonthSelect")?.value || "";
+  if (monthF) data = data.filter(r => r.fecha && r.fecha.startsWith(monthF));
+  return data;
+}
+
+function renderKpi() {
+  const data = getKpiData();
+  const cont = document.getElementById("kpiContent");
+  if (!data.length) {
+    cont.innerHTML = `<div class="kpi-empty">📭 No hay revisiones registradas aún para este período.</div>`;
+    return;
+  }
+
+  // ── Métricas globales
+  const totalItems = data.reduce((s,r) => s + r.items.length, 0);
+  const totalOk = data.reduce((s,r) => s + (r.ok||0), 0);
+  const totalFail = data.reduce((s,r) => s + (r.fail||0), 0);
+  const totalNa = data.reduce((s,r) => s + (r.na||0), 0);
+  const pct = totalItems > 0 ? Math.round((totalOk / (totalOk + totalFail)) * 100) || 0 : 0;
+  const pctColor = pct >= 90 ? '#3B6D11' : pct >= 70 ? '#BA7517' : '#A32D2D';
+
+  // ── % cumplimiento por área
+  const byArea = {};
+  data.forEach(r => {
+    if (!byArea[r.area]) byArea[r.area] = { ok:0, fail:0 };
+    byArea[r.area].ok += r.ok||0;
+    byArea[r.area].fail += r.fail||0;
+  });
+  const areaRanking = Object.entries(byArea).map(([area, v]) => {
+    const total = v.ok + v.fail;
+    return { area, pct: total > 0 ? Math.round((v.ok/total)*100) : 100, fail: v.fail };
+  }).sort((a,b) => a.pct - b.pct);
+
+  // ── Ranking de no cumple
+  const failRanking = [...areaRanking].sort((a,b) => b.fail - a.fail).slice(0,10);
+
+  // ── Por supervisor
+  const bySup = {};
+  data.forEach(r => {
+    if (!bySup[r.supervisor]) bySup[r.supervisor] = { ok:0, fail:0 };
+    bySup[r.supervisor].ok += r.ok||0;
+    bySup[r.supervisor].fail += r.fail||0;
+  });
+  const supRanking = Object.entries(bySup).map(([sup, v]) => {
+    const total = v.ok + v.fail;
+    return { sup, pct: total > 0 ? Math.round((v.ok/total)*100) : 100 };
+  }).sort((a,b) => b.pct - a.pct);
+
+  // ── Turno A vs B (solo admin)
+  const turnoA = data.filter(r=>r.turno==="Turno A");
+  const turnoB = data.filter(r=>r.turno==="Turno B");
+  const pctTurno = t => {
+    const ok = t.reduce((s,r)=>s+(r.ok||0),0);
+    const fail = t.reduce((s,r)=>s+(r.fail||0),0);
+    return ok+fail>0 ? Math.round((ok/(ok+fail))*100) : 0;
+  };
+
+  // ── Tendencia semanal y mensual
+  const weeklyMap = {}, monthlyMap = {};
+  data.forEach(r => {
+    const d = new Date(r.fecha);
+    const wk = `${d.getFullYear()}-S${String(getWeek(d)).padStart(2,'0')}`;
+    const mo = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+    if (!weeklyMap[wk]) weeklyMap[wk] = {ok:0,fail:0,turnoA:0,turnoAFail:0,turnoB:0,turnoBFail:0};
+    if (!monthlyMap[mo]) monthlyMap[mo] = {ok:0,fail:0};
+    weeklyMap[wk].ok += r.ok||0; weeklyMap[wk].fail += r.fail||0;
+    if (r.turno==="Turno A") { weeklyMap[wk].turnoA += r.ok||0; weeklyMap[wk].turnoAFail += r.fail||0; }
+    if (r.turno==="Turno B") { weeklyMap[wk].turnoB += r.ok||0; weeklyMap[wk].turnoBFail += r.fail||0; }
+    monthlyMap[mo].ok += r.ok||0; monthlyMap[mo].fail += r.fail||0;
+  });
+  const trendPct = obj => Object.entries(obj).sort((a,b)=>a[0]>b[0]?1:-1).slice(-8).map(([k,v])=>({
+    lbl: k, pct: v.ok+v.fail>0 ? Math.round((v.ok/(v.ok+v.fail))*100) : 0,
+    pctA: v.turnoA+v.turnoAFail>0 ? Math.round((v.turnoA/(v.turnoA+v.turnoAFail))*100) : null,
+    pctB: v.turnoB+v.turnoBFail>0 ? Math.round((v.turnoB/(v.turnoB+v.turnoBFail))*100) : null
+  }));
+  const weekly = trendPct(weeklyMap);
+  const monthly = trendPct(monthlyMap);
+
+  // ── KPIs supervisor: racha, ítem más falla, mis hallazgos
+  const hoy = new Date().toISOString().split("T")[0];
+  const allReports = [...reports]; // sin filtro de período para racha
+  const turnoSession = kpiSession !== "admin" ? "Turno " + kpiSession : null;
+
+  // Racha: días consecutivos con ≥90% (usando todos los reports del turno, sin filtro de mes)
+  let rachaData = turnoSession ? allReports.filter(r => r.turno === turnoSession) : [];
+  const rachaByDay = {};
+  rachaData.forEach(r => {
+    if (!rachaByDay[r.fecha]) rachaByDay[r.fecha] = {ok:0,fail:0};
+    rachaByDay[r.fecha].ok += r.ok||0; rachaByDay[r.fecha].fail += r.fail||0;
+  });
+  const diasOrdenados = Object.keys(rachaByDay).sort().reverse();
+  let racha = 0;
+  for (const dia of diasOrdenados) {
+    const v = rachaByDay[dia];
+    const p = v.ok+v.fail>0 ? Math.round((v.ok/(v.ok+v.fail))*100) : 0;
+    if (p >= 90) racha++; else break;
+  }
+
+  // Ítem que más falla en el período
+  const itemFails = {};
+  data.forEach(r => {
+    (r.items||[]).forEach(it => {
+      if (it.status === "fail") { itemFails[it.name] = (itemFails[it.name]||0) + 1; }
+    });
+  });
+  const topFails = Object.entries(itemFails).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  // Mis hallazgos abiertos (del turno o todos si admin)
+  const misHallazgos = turnoSession
+    ? hallazgos.filter(h => h.estado==="abierto" && reports.some(r => r.supervisor===h.supervisor && r.turno===turnoSession))
+    : hallazgos.filter(h => h.estado==="abierto");
+
+  // ── KPIs admin: supervisor más activo, áreas sin revisar +7d, tasa resolución
+  // Supervisor más activo
+  const supCount = {};
+  allReports.forEach(r => { supCount[r.supervisor] = (supCount[r.supervisor]||0) + 1; });
+  const supActivo = Object.entries(supCount).sort((a,b)=>b[1]-a[1]).slice(0,5);
+
+  // Áreas sin revisar en más de 7 días
+  const areaLastReview = {};
+  allReports.forEach(r => {
+    if (!areaLastReview[r.area] || r.fecha > areaLastReview[r.area]) areaLastReview[r.area] = r.fecha;
+  });
+  const hace7 = new Date(); hace7.setDate(hace7.getDate()-7);
+  const areasSinRevisar = areas.filter(a => {
+    const ultima = areaLastReview[a.name];
+    if (!ultima) return true;
+    return new Date(ultima) < hace7;
+  });
+
+  // Tasa de resolución a tiempo
+  const hAllCerrados = hallazgos.filter(h => h.estado==="cerrado" && h.fechaAbierto && h.fechaCerrado);
+  const hATiempo = hAllCerrados.filter(h => Math.floor((new Date(h.fechaCerrado)-new Date(h.fechaAbierto))/86400000) < DIAS_CRITICO);
+  const tasaResolucion = hAllCerrados.length > 0 ? Math.round((hATiempo.length/hAllCerrados.length)*100) : null;
+
+  const barColor = p => p >= 90 ? 'good' : p >= 70 ? 'warning' : 'danger';
+
+  cont.innerHTML = `
+    <div class="kpi-cards">
+      <div class="kpi-card">
+        <div class="kpi-lbl">Cumplimiento general</div>
+        <div class="kpi-val" style="color:${pctColor}">${pct}%</div>
+        <div class="kpi-sub">${data.length} revisiones</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-lbl">Ítems no cumplen</div>
+        <div class="kpi-val fail-color">${totalFail}</div>
+        <div class="kpi-sub">de ${totalItems} revisados</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-lbl">Ítems cumplen</div>
+        <div class="kpi-val ok-color">${totalOk}</div>
+        <div class="kpi-sub">${totalNa} N/A</div>
+      </div>
+      <div class="kpi-card" style="cursor:pointer;" onclick="togglePendingAreas()" title="Ver áreas pendientes">
+        <div class="kpi-lbl">Áreas revisadas</div>
+        <div class="kpi-val" style="color:#004B93">${Object.keys(byArea).length} <span style="font-size:16px;color:#aaa;">/ ${areas.length}</span></div>
+        <div style="margin: 6px 0 2px; background:#f0f0f0; border-radius:4px; height:6px; overflow:hidden;">
+          <div style="height:6px; border-radius:4px; background:${Object.keys(byArea).length/areas.length>=0.9?'#639922':Object.keys(byArea).length/areas.length>=0.7?'#EF9F27':'#E24B4A'}; width:${Math.round((Object.keys(byArea).length/areas.length)*100)}%; transition:width 0.4s;"></div>
+        </div>
+        <div class="kpi-sub">${Math.round((Object.keys(byArea).length/areas.length)*100)}% de cobertura · ver pendientes ▾</div>
+      </div>
+    </div>
+
+    <div id="pendingAreasBox" style="display:none; background:#fff; border:1px solid #e4e4e4; border-radius:14px; padding:16px 18px; margin-bottom:14px;">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px;">
+        <span style="font-size:13px; font-weight:600; color:#888; text-transform:uppercase; letter-spacing:0.4px;">Áreas sin revisar en este período</span>
+        <button onclick="togglePendingAreas()" style="background:none;border:none;cursor:pointer;font-size:16px;color:#aaa;">✕</button>
+      </div>
+      ${(() => {
+        const revisadas = new Set(Object.keys(byArea));
+        const pendientes = areas.filter(a => !revisadas.has(a.name));
+        if (pendientes.length === 0) return `<div class="kpi-empty">🎉 ¡Todas las áreas han sido revisadas!</div>`;
+        return `<div style="display:flex; flex-wrap:wrap; gap:6px;">${pendientes.map(a=>`<span style="font-size:12px; background:#fff7e6; color:#BA7517; border:1px solid #f0d080; border-radius:20px; padding:4px 10px;">${a.name}</span>`).join('')}</div>`;
+      })()}
+    </div>
+
+    ${kpiSession !== "admin" ? `
+    <div class="kpi-cards" style="grid-template-columns:1fr 1fr 1fr; margin-bottom:14px;">
+      <div class="kpi-card">
+        <div class="kpi-lbl">🔥 Racha</div>
+        <div class="kpi-val" style="color:${racha>=7?'#3B6D11':racha>=3?'#BA7517':'#004B93'}">${racha}</div>
+        <div class="kpi-sub">${racha===1?'día consecutivo':racha===0?'sin racha aún':'días consecutivos'} ≥90%</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-lbl">⚠ Ítem más falla</div>
+        <div style="font-size:12px;font-weight:600;color:#A32D2D;margin:6px 0 2px;line-height:1.3;">${topFails.length>0?topFails[0][0]:'Sin datos'}</div>
+        <div class="kpi-sub">${topFails.length>0?topFails[0][1]+' veces':''}</div>
+      </div>
+      <div class="kpi-card" style="cursor:pointer;" onclick="switchTab('hallazgos')">
+        <div class="kpi-lbl">📌 Mis hallazgos</div>
+        <div class="kpi-val" style="color:${misHallazgos.length>0?'#A32D2D':'#3B6D11'}">${misHallazgos.length}</div>
+        <div class="kpi-sub">${misHallazgos.length===0?'¡Todo resuelto!':misHallazgos.length===1?'pendiente':'pendientes'}</div>
+      </div>
+    </div>
+
+    ${topFails.length > 1 ? `
+    <div class="kpi-section" style="margin-bottom:14px;">
+      <h3>Ítems que más fallan en tu turno</h3>
+      ${topFails.map(([item,count])=>`
+        <div class="kpi-row">
+          <span class="kpi-row-label" title="${item}">${item}</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar danger" style="width:${Math.min(count*15,100)}%"></div></div>
+          <span class="kpi-pct" style="color:#A32D2D">${count}</span>
+        </div>`).join("")}
+    </div>` : ""}` : ""}
+
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
+      <h3>Turno A vs Turno B</h3>
+      ${[["Turno A", turnoA, "badge-turno-a"], ["Turno B", turnoB, "badge-turno-b"]].map(([lbl, t, cls]) => `
+        <div class="kpi-row">
+          <span class="kpi-row-label"><span class="${cls}">${lbl}</span> &nbsp;${t.length} rev.</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar ${barColor(pctTurno(t))}" style="width:${pctTurno(t)}%"></div></div>
+          <span class="kpi-pct">${pctTurno(t)}%</span>
+        </div>`).join("")}
+    </div>` : ""}
+
+    <div class="kpi-section">
+      <h3>% cumplimiento por área (peores primero)</h3>
+      ${areaRanking.slice(0,15).map(a=>`
+        <div class="kpi-row">
+          <span class="kpi-row-label" title="${a.area}">${a.area}</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar ${barColor(a.pct)}" style="width:${a.pct}%"></div></div>
+          <span class="kpi-pct">${a.pct}%</span>
+        </div>`).join("")}
+    </div>
+
+    <div class="kpi-section">
+      <h3>Áreas con más no cumple</h3>
+      ${failRanking.filter(a=>a.fail>0).length === 0
+        ? `<div class="kpi-empty">🎉 Sin ítems "no cumple" en este período</div>`
+        : failRanking.filter(a=>a.fail>0).map(a=>`
+        <div class="kpi-row">
+          <span class="kpi-row-label" title="${a.area}">${a.area}</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar danger" style="width:${Math.min(a.fail*10,100)}%"></div></div>
+          <span class="kpi-pct" style="color:#A32D2D">${a.fail}</span>
+        </div>`).join("")}
+    </div>
+
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
+      <h3>Cumplimiento por supervisor</h3>
+      ${supRanking.map(s=>`
+        <div class="kpi-row">
+          <span class="kpi-row-label">${s.sup}</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar ${barColor(s.pct)}" style="width:${s.pct}%"></div></div>
+          <span class="kpi-pct">${s.pct}%</span>
+        </div>`).join("")}
+    </div>` : ""}
+
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
+      <h3>Seguimiento de hallazgos</h3>
+      ${(() => {
+        const abiertos = hallazgos.filter(h => h.estado === "abierto");
+        const cerrados = hallazgos.filter(h => h.estado === "cerrado");
+        const criticos = abiertos.filter(h => diasDesde(h.fechaAbierto) >= DIAS_CRITICO);
+        const tiempos = cerrados.filter(h => h.fechaAbierto && h.fechaCerrado).map(h => Math.floor((new Date(h.fechaCerrado) - new Date(h.fechaAbierto)) / 86400000));
+        const promedio = tiempos.length > 0 ? (tiempos.reduce((a,b)=>a+b,0) / tiempos.length).toFixed(1) : "—";
+        return `
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
+          <div style="background:#FCEBEB;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:26px;font-weight:600;color:#A32D2D;">${abiertos.length}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">Abiertos</div>
+          </div>
+          <div style="background:#EAF3DE;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:26px;font-weight:600;color:#3B6D11;">${cerrados.length}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">Cerrados</div>
+          </div>
+          <div style="background:#FFF7E6;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:26px;font-weight:600;color:#BA7517;">${criticos.length}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">Críticos (+${DIAS_CRITICO}d)</div>
+          </div>
+          <div style="background:#f0f5ff;border-radius:10px;padding:12px;text-align:center;">
+            <div style="font-size:26px;font-weight:600;color:#004B93;">${promedio}</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">Días prom. resolución</div>
+          </div>
+        </div>
+        ${criticos.length > 0 ? `<div style="font-size:12px;font-weight:600;color:#A32D2D;margin-bottom:6px;">⚠ Hallazgos críticos sin resolver:</div>
+        ${criticos.slice(0,5).map(h=>`<div style="font-size:12px;color:#555;padding:5px 0;border-bottom:1px solid #f8f8f8;">${h.area} — ${h.item} <span style="color:#A32D2D;">(${diasDesde(h.fechaAbierto)}d)</span></div>`).join("")}` : ""}
+        `;
+      })()}
+    </div>` : ""}
+
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
+      <h3>Supervisor más activo</h3>
+      ${supActivo.length === 0 ? `<div class="kpi-empty">Sin datos</div>` :
+        supActivo.map(([sup, count], i) => `
+        <div class="kpi-row">
+          <span class="kpi-row-label">${i===0?'🥇':i===1?'🥈':i===2?'🥉':'   '} ${sup}</span>
+          <div class="kpi-bar-wrap"><div class="kpi-bar good" style="width:${Math.round((count/supActivo[0][1])*100)}%"></div></div>
+          <span class="kpi-pct" style="color:#004B93">${count} rev.</span>
+        </div>`).join("")}
+    </div>
+
+    <div class="kpi-section">
+      <h3>Áreas sin revisar en más de 7 días</h3>
+      ${areasSinRevisar.length === 0
+        ? `<div class="kpi-empty">🎉 Todas las áreas revisadas recientemente</div>`
+        : `<div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${areasSinRevisar.map(a => {
+              const ultima = areaLastReview[a.name];
+              const dias = ultima ? diasDesde(ultima) : null;
+              return `<span style="font-size:12px;background:#FCEBEB;color:#A32D2D;border:1px solid #f0c0c0;border-radius:20px;padding:4px 10px;" title="${ultima?'Última revisión: '+ultima:'Sin revisiones'}">
+                ${a.name}${dias?` · ${dias}d`:''}
+              </span>`;
+            }).join('')}
+          </div>`}
+    </div>
+
+    <div class="kpi-section">
+      <h3>Tasa de resolución de hallazgos a tiempo</h3>
+      ${tasaResolucion === null
+        ? `<div class="kpi-empty">Sin hallazgos cerrados aún</div>`
+        : `<div style="display:flex;align-items:center;gap:16px;">
+            <div style="font-size:36px;font-weight:700;color:${tasaResolucion>=80?'#3B6D11':tasaResolucion>=60?'#BA7517':'#A32D2D'};">${tasaResolucion}%</div>
+            <div>
+              <div style="font-size:13px;color:#333;">${hATiempo.length} de ${hAllCerrados.length} hallazgos cerrados antes de ${DIAS_CRITICO} días</div>
+              <div style="font-size:12px;color:#888;margin-top:3px;">Meta: cerrar antes de ${DIAS_CRITICO} días</div>
+              <div style="margin-top:8px;background:#f0f0f0;border-radius:4px;height:8px;width:160px;">
+                <div style="height:8px;border-radius:4px;background:${tasaResolucion>=80?'#639922':tasaResolucion>=60?'#EF9F27':'#E24B4A'};width:${tasaResolucion}%;"></div>
+              </div>
+            </div>
+          </div>`}
+    </div>
+
+    <div class="kpi-section">
+      <h3>Comparativa semanal Turno A vs B</h3>
+      ${weekly.length === 0 ? `<div class="kpi-empty">Sin datos suficientes</div>` :
+        `<div style="overflow-x:auto;">
+          <table style="width:100%;border-collapse:collapse;font-size:12px;">
+            <thead>
+              <tr>
+                <th style="text-align:left;padding:6px 8px;color:#aaa;font-weight:600;text-transform:uppercase;letter-spacing:0.4px;">Semana</th>
+                <th style="text-align:center;padding:6px 8px;color:#004B93;font-weight:600;">Turno A</th>
+                <th style="text-align:center;padding:6px 8px;color:#BA7517;font-weight:600;">Turno B</th>
+                <th style="text-align:center;padding:6px 8px;color:#888;font-weight:600;">General</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${weekly.map(w=>`
+              <tr style="border-top:1px solid #f0f0f0;">
+                <td style="padding:7px 8px;color:#555;">Sem ${w.lbl.split('-S')[1]||w.lbl}</td>
+                <td style="text-align:center;padding:7px 8px;font-weight:600;color:${w.pctA===null?'#ccc':w.pctA>=90?'#3B6D11':w.pctA>=70?'#BA7517':'#A32D2D'};">${w.pctA===null?'—':w.pctA+'%'}</td>
+                <td style="text-align:center;padding:7px 8px;font-weight:600;color:${w.pctB===null?'#ccc':w.pctB>=90?'#3B6D11':w.pctB>=70?'#BA7517':'#A32D2D'};">${w.pctB===null?'—':w.pctB+'%'}</td>
+                <td style="text-align:center;padding:7px 8px;font-weight:600;color:${w.pct>=90?'#3B6D11':w.pct>=70?'#BA7517':'#A32D2D'};">${w.pct}%</td>
+              </tr>`).join("")}
+            </tbody>
+          </table>
+        </div>`}
+    </div>` : ""}
+
+    <div class="kpi-section">
+      <h3>Tendencia semanal</h3>
+      ${weekly.length === 0 ? `<div class="kpi-empty">Sin datos suficientes</div>` :
+        `<div class="kpi-trend-grid">${weekly.map(w=>`
+          <div class="kpi-trend-item">
+            <div class="t-val" style="color:${w.pct>=90?'#3B6D11':w.pct>=70?'#BA7517':'#A32D2D'}">${w.pct}%</div>
+            <div class="t-lbl">${w.lbl.split('-S')[1]?'Sem '+w.lbl.split('-S')[1]:w.lbl}</div>
+          </div>`).join("")}</div>`}
+    </div>
+
+    <div class="kpi-section">
+      <h3>Tendencia mensual</h3>
+      ${monthly.length === 0 ? `<div class="kpi-empty">Sin datos suficientes</div>` :
+        `<div class="kpi-trend-grid">${monthly.map(m=>`
+          <div class="kpi-trend-item">
+            <div class="t-val" style="color:${m.pct>=90?'#3B6D11':m.pct>=70?'#BA7517':'#A32D2D'}">${m.pct}%</div>
+            <div class="t-lbl">${m.lbl}</div>
+          </div>`).join("")}</div>`}
+    </div>
+  `;
+}
+
+function togglePendingAreas() {
+  const box = document.getElementById("pendingAreasBox");
+  if (box) box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+function getWeek(d) {
+  const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+  date.setUTCDate(date.getUTCDate() + 4 - (date.getUTCDay()||7));
+  const yearStart = new Date(Date.UTC(date.getUTCFullYear(),0,1));
+  return Math.ceil((((date - yearStart) / 86400000) + 1)/7);
+}
+
+// ─── HALLAZGOS ────────────────────────────────────────────────────────────────
+let hallazgos = JSON.parse(localStorage.getItem("sdx_hallazgos") || "[]");
+let hallazgosView = "abiertos"; // 'abiertos' | 'cerrados'
+const DIAS_CRITICO = 5;
+
+function saveHallazgos() {
+  localStorage.setItem("sdx_hallazgos", JSON.stringify(hallazgos));
+  updateHallazgosBadge();
+}
+
+function updateHallazgosBadge() {
+  const abiertos = hallazgos.filter(h => h.estado === "abierto").length;
+  const btn = document.getElementById("tab-btn-hallazgos");
+  if (btn) {
+    const criticos = hallazgos.filter(h => h.estado === "abierto" && diasDesde(h.fechaAbierto) >= DIAS_CRITICO).length;
+    btn.innerHTML = `🔴 Hallazgos${abiertos > 0 ? `<span class="hallazgo-badge-count">${abiertos}</span>` : ""}`;
+  }
+}
+
+function diasDesde(fechaStr) {
+  const hoy = new Date(); hoy.setHours(0,0,0,0);
+  const d = new Date(fechaStr + "T00:00:00"); d.setHours(0,0,0,0);
+  return Math.floor((hoy - d) / 86400000);
+}
+
+function abrirHallazgo(areaName, itemName, supervisor, fecha) {
+  const desc = prompt(`Hallazgo en "${areaName}"\nÍtem: ${itemName}\n\nDescripción del problema (opcional):`);
+  if (desc === null) return; // canceló
+  const h = {
+    id: Date.now(),
+    area: areaName,
+    item: itemName,
+    descripcion: desc.trim(),
+    supervisor: supervisor,
+    fechaAbierto: fecha,
+    estado: "abierto",
+    fechaCerrado: null,
+    supervisorCerro: null
+  };
+  hallazgos.unshift(h);
+  saveHallazgos();
+  showToast("Hallazgo registrado ✓");
+}
+
+function resolverHallazgo(id) {
+  const h = hallazgos.find(x => x.id === id);
+  if (!h) return;
+  const supervisor = prompt(`Confirmar cierre del hallazgo:\n"${h.item}" en ${h.area}\n\nIngresa tu nombre para confirmar:`);
+  if (!supervisor || supervisor.trim() === "") return;
+  if (supervisor.trim().toLowerCase() !== h.supervisor.trim().toLowerCase()) {
+    showToast("Solo el supervisor que abrió el hallazgo puede cerrarlo", "error");
+    return;
+  }
+  h.estado = "cerrado";
+  h.fechaCerrado = new Date().toISOString().split("T")[0];
+  h.supervisorCerro = supervisor.trim();
+  saveHallazgos();
+  renderHallazgos();
+  showToast("Hallazgo cerrado ✓");
+}
+
+function switchHallazgosView(view) {
+  hallazgosView = view;
+  document.getElementById("hv-abiertos").classList.toggle("active", view === "abiertos");
+  document.getElementById("hv-cerrados").classList.toggle("active", view === "cerrados");
+  renderHallazgos();
+}
+
+function renderHallazgos() {
+  const cont = document.getElementById("hallazgosContent");
+  const lista = hallazgos.filter(h => h.estado === (hallazgosView === "abiertos" ? "abierto" : "cerrado"));
+
+  if (lista.length === 0) {
+    cont.innerHTML = `<div class="hallazgo-empty">
+      <div style="font-size:36px;margin-bottom:10px">${hallazgosView === "abiertos" ? "🎉" : "📭"}</div>
+      <p>${hallazgosView === "abiertos" ? "No hay hallazgos abiertos. ¡Todo bajo control!" : "No hay hallazgos cerrados aún."}</p>
+    </div>`;
+    return;
+  }
+
+  cont.innerHTML = lista.map(h => {
+    if (h.estado === "abierto") {
+      const dias = diasDesde(h.fechaAbierto);
+      const nivel = dias >= DIAS_CRITICO ? "critico" : "reciente";
+      return `<div class="hallazgo-card ${nivel}">
+        <div class="hallazgo-header">
+          <div class="hallazgo-dias ${nivel}">
+            <span class="d-num">${dias}</span>
+            <span class="d-lbl">${dias === 1 ? "día" : "días"}</span>
+          </div>
+          <div class="hallazgo-info">
+            <h3>${h.item}</h3>
+            <p>${h.area} &nbsp;·&nbsp; ${h.supervisor} &nbsp;·&nbsp; ${h.fechaAbierto}</p>
+          </div>
+          ${dias >= DIAS_CRITICO ? `<span style="font-size:11px;background:#FCEBEB;color:#A32D2D;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;">⚠ Crítico</span>` : ""}
+        </div>
+        ${h.descripcion ? `<div class="hallazgo-desc">${h.descripcion}</div>` : ""}
+        <div class="hallazgo-actions">
+          <button class="btn-resolver" onclick="resolverHallazgo(${h.id})">✓ Marcar como resuelto</button>
+        </div>
+      </div>`;
+    } else {
+      const dias = h.fechaAbierto && h.fechaCerrado
+        ? Math.floor((new Date(h.fechaCerrado) - new Date(h.fechaAbierto)) / 86400000)
+        : "—";
+      return `<div class="hallazgo-card cerrado">
+        <div class="hallazgo-header">
+          <div class="hallazgo-dias cerrado">
+            <span class="d-num">✓</span>
+          </div>
+          <div class="hallazgo-info">
+            <h3>${h.item}</h3>
+            <p>${h.area} &nbsp;·&nbsp; Abierto: ${h.fechaAbierto} &nbsp;·&nbsp; Cerrado: ${h.fechaCerrado}</p>
+          </div>
+        </div>
+        ${h.descripcion ? `<div class="hallazgo-desc">${h.descripcion}</div>` : ""}
+        <div class="hallazgo-actions" style="color:#888;font-size:12px;">
+          Resuelto por <strong>${h.supervisorCerro}</strong> &nbsp;·&nbsp; ${dias} día${dias !== 1 ? "s" : ""} abierto
+        </div>
+      </div>`;
+    }
+  }).join("");
+}
+
+// ─── EXPORT PDF ───────────────────────────────────────────────────────────────
+function exportPdf(reportId) {
+  const r = reports.find(x => x.id === reportId);
+  if (!r) return;
+
+  const statusLabel = s => s === 'ok' ? '✓ Cumple' : s === 'fail' ? '✗ No cumple' : s === 'na' ? '— N/A' : '○ Sin revisar';
+  const statusColor = s => s === 'ok' ? '#3B6D11' : s === 'fail' ? '#A32D2D' : s === 'na' ? '#888' : '#ccc';
+  const statusBg    = s => s === 'ok' ? '#EAF3DE' : s === 'fail' ? '#FCEBEB' : s === 'na' ? '#f3f3f3' : '#fafafa';
+
+  const pct = r.ok + r.fail > 0 ? Math.round((r.ok / (r.ok + r.fail)) * 100) : 0;
+  const pctColor = pct >= 90 ? '#3B6D11' : pct >= 70 ? '#BA7517' : '#A32D2D';
+
+  const photosHtml = r.photos && r.photos.length ? `
+    <div class="section">
+      <div class="section-title">Evidencia fotográfica</div>
+      <div class="photos-grid">
+        ${r.photos.map(p => `
+          <div class="photo-item">
+            <img src="${p.src}" />
+            ${p.label ? `<div class="photo-label">${p.label}</div>` : ''}
+          </div>`).join('')}
+      </div>
+    </div>` : '';
+
+  const html = `<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<title>Revisión — ${r.area} — ${r.fecha}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 13px; color: #1a1a1a; padding: 28px 32px; background: #fff; }
+  .header { display: flex; align-items: center; gap: 16px; border-bottom: 2px solid #004B93; padding-bottom: 14px; margin-bottom: 20px; }
+  .logo { width: 48px; height: 48px; border-radius: 50%; background: #004B93; color: #fff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; flex-shrink: 0; }
+  .header-info h1 { font-size: 17px; font-weight: 700; color: #004B93; }
+  .header-info p { font-size: 12px; color: #666; margin-top: 2px; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .meta-item { background: #f4f5f7; border-radius: 8px; padding: 10px 14px; }
+  .meta-item .lbl { font-size: 10px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+  .meta-item .val { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+  .summary { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; margin-bottom: 18px; }
+  .sum-box { border-radius: 8px; padding: 10px; text-align: center; border: 1px solid #e4e4e4; }
+  .sum-box .num { font-size: 24px; font-weight: 700; }
+  .sum-box .lbl { font-size: 10px; color: #888; margin-top: 2px; text-transform: uppercase; }
+  .section { margin-bottom: 18px; }
+  .section-title { font-size: 11px; font-weight: 700; color: #004B93; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e4e4e4; padding-bottom: 6px; margin-bottom: 10px; }
+  .item-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 6px; margin-bottom: 4px; }
+  .item-name { font-size: 12px; color: #333; flex: 1; }
+  .item-badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px; white-space: nowrap; }
+  .obs-box { background: #fafafa; border: 1px solid #e4e4e4; border-radius: 8px; padding: 12px 14px; font-size: 13px; color: #555; line-height: 1.6; }
+  .photos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .photo-item img { width: 100%; border-radius: 8px; border: 1px solid #e4e4e4; display: block; }
+  .photo-label { font-size: 10px; color: #888; margin-top: 4px; text-align: center; }
+  .sigs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .sig-box { text-align: center; border: 1px solid #e4e4e4; border-radius: 8px; padding: 10px; }
+  .sig-box img { max-width: 100%; max-height: 80px; border-radius: 4px; }
+  .sig-box p { font-size: 11px; color: #666; margin-top: 6px; }
+  .sig-box .sig-role { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .footer { margin-top: 24px; border-top: 1px solid #e4e4e4; padding-top: 10px; font-size: 10px; color: #aaa; display: flex; justify-content: space-between; }
+  @media print { body { padding: 16px 20px; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">SDX</div>
+  <div class="header-info">
+    <h1>Revisión de Área — ${r.area}</h1>
+    <p>Sodexo @ ICU Medical &nbsp;·&nbsp; Servicio de limpieza y cafetería</p>
+  </div>
+</div>
+
+<div class="meta-grid">
+  <div class="meta-item"><div class="lbl">Fecha</div><div class="val">${r.fecha}</div></div>
+  <div class="meta-item"><div class="lbl">Turno</div><div class="val">${r.turno}</div></div>
+  <div class="meta-item"><div class="lbl">Supervisor</div><div class="val">${r.supervisor}</div></div>
+</div>
+
+<div class="summary">
+  <div class="sum-box" style="border-color:#639922;">
+    <div class="num" style="color:#3B6D11;">${r.ok}</div>
+    <div class="lbl">Cumple</div>
+  </div>
+  <div class="sum-box" style="border-color:#E24B4A;">
+    <div class="num" style="color:#A32D2D;">${r.fail}</div>
+    <div class="lbl">No cumple</div>
+  </div>
+  <div class="sum-box" style="border-color:#ccc;">
+    <div class="num" style="color:#888;">${r.na}</div>
+    <div class="lbl">N/A</div>
+  </div>
+  <div class="sum-box" style="border-color:${pctColor};">
+    <div class="num" style="color:${pctColor};">${pct}%</div>
+    <div class="lbl">Cumplimiento</div>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-title">Ítems revisados — ${r.categoria}</div>
+  ${r.items.map(it => `
+    <div class="item-row" style="background:${statusBg(it.status)};">
+      <span class="item-name">${it.name}</span>
+      <span class="item-badge" style="background:${statusBg(it.status)};color:${statusColor(it.status)};">${statusLabel(it.status)}</span>
+    </div>`).join('')}
+</div>
+
+${r.observaciones ? `
+<div class="section">
+  <div class="section-title">Observaciones</div>
+  <div class="obs-box">${r.observaciones}</div>
+</div>` : ''}
+
+${photosHtml}
+
+<div class="section">
+  <div class="section-title">Firmas</div>
+  <div class="sigs-grid">
+    <div class="sig-box">
+      <img src="${r.sig1}" />
+      <p>${r.sigName1 || 'Supervisor'}</p>
+      <div class="sig-role">Quien realizó la revisión</div>
+    </div>
+    <div class="sig-box">
+      <img src="${r.sig2}" />
+      <p>${r.sigName2 || 'Responsable'}</p>
+      <div class="sig-role">Persona responsable del área</div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <span>Sodexo @ ICU Medical — Sistema de Revisión de Áreas</span>
+  <span>Generado: ${new Date().toLocaleDateString('es-CR', {day:'2-digit',month:'long',year:'numeric'})}</span>
+</div>
+
+<script>window.onload = () => { window.print(); }<\/script>
+</body>
+</html>`;
+
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function showToast(msg, type="") {
+  const t=document.getElementById("toast");
+  t.textContent=msg; t.className="toast"+(type?" "+type:"")+" show";
+  setTimeout(()=>t.classList.remove("show"),3500);
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+document.getElementById("fecha").value=new Date().toISOString().split("T")[0];
+buildSelect();
+updateHallazgosBadge();
+window.addEventListener("load",()=>{ initSig(1); initSig(2); });
+</script>
+</body>
+</html>
