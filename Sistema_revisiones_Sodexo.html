@@ -6,259 +6,288 @@
 <title>Revisión de Áreas — Sodexo @ ICU Medical</title>
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f4f5f7; color: #1a1a1a; font-size: 15px; }
+
+  /* ── TEMA CLARO (default) ── */
+  :root {
+    --bg: #f4f5f7; --card: #fff; --border: #e4e4e4; --text: #1a1a1a; --text2: #666;
+    --text3: #888; --text4: #aaa; --input-bg: #fafafa; --blue: #004B93;
+    --blue-light: #e8f0fe; --blue-bg: #f0f5ff; --ok: #3B6D11; --ok-bg: #EAF3DE;
+    --fail: #A32D2D; --fail-bg: #FCEBEB; --warn: #BA7517; --warn-bg: #FFF7E6;
+    --row-hover: #f8f8f8; --overlay: rgba(255,255,255,0.85);
+  }
+  /* ── TEMA OSCURO ── */
+  [data-theme="dark"] {
+    --bg: #0f1117; --card: #1a1d27; --border: #2a2d3a; --text: #e8e9ed; --text2: #9ca3af;
+    --text3: #6b7280; --text4: #4b5563; --input-bg: #12151f; --blue: #4f9cf9;
+    --blue-light: #1e2d4a; --blue-bg: #1a2540; --ok: #6abf45; --ok-bg: #1a2e0f;
+    --fail: #f87171; --fail-bg: #2d1010; --warn: #fbbf24; --warn-bg: #2d1f07;
+    --row-hover: #1f2230; --overlay: rgba(15,17,23,0.9);
+  }
+
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); font-size: 15px; transition: background 0.2s, color 0.2s; }
   .page { max-width: 760px; margin: 0 auto; padding: 24px 16px 60px; }
-
-  /* Nav tabs */
-  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: #fff; border-radius: 12px; padding: 5px; border: 1px solid #e4e4e4; }
-  .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; background: transparent; color: #888; transition: all 0.15s; }
-  .tab-btn.active { background: #004B93; color: #fff; }
-
+  .tabs { display: flex; gap: 4px; margin-bottom: 20px; background: var(--card); border-radius: 12px; padding: 5px; border: 1px solid var(--border); }
+  .tab-btn { flex: 1; padding: 10px; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; background: transparent; color: var(--text3); transition: all 0.15s; }
+  .tab-btn.active { background: var(--blue); color: #fff; }
   .tab-content { display: none; }
   .tab-content.active { display: block; }
-
-  .header { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid #e4e4e4; }
-  .logo { width: 48px; height: 48px; border-radius: 50%; background: #004B93; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .header { display: flex; align-items: center; gap: 14px; background: var(--card); border-radius: 14px; padding: 16px 20px; margin-bottom: 20px; border: 1px solid var(--border); }
+  .logo { width: 48px; height: 48px; border-radius: 50%; background: var(--blue); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .logo span { color: #fff; font-size: 13px; font-weight: 600; letter-spacing: 0.5px; }
-  .header-text h1 { font-size: 17px; font-weight: 600; color: #004B93; }
-  .header-text p { font-size: 13px; color: #666; margin-top: 2px; }
-
-  .meta-card { background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #e4e4e4; }
+  .header-text h1 { font-size: 17px; font-weight: 600; color: var(--blue); }
+  .header-text p { font-size: 13px; color: var(--text2); margin-top: 2px; }
+  .theme-toggle { margin-left:auto; background:var(--input-bg); border:1px solid var(--border); border-radius:20px; padding:5px 12px; font-size:13px; cursor:pointer; color:var(--text); font-family:inherit; }
+  .meta-card { background: var(--card); border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid var(--border); }
   .meta-grid { display: grid; gap: 14px; }
   .meta-grid.three { grid-template-columns: 1fr 1fr 1fr; }
   @media (max-width: 520px) { .meta-grid.three { grid-template-columns: 1fr 1fr; } }
   .field-group { display: flex; flex-direction: column; gap: 5px; }
-  .field-group label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; }
-  .field-group input, .field-group select { border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 14px; color: #1a1a1a; background: #fafafa; width: 100%; transition: border-color 0.15s; -webkit-appearance: none; appearance: none; }
-  .field-group input:focus, .field-group select:focus { outline: none; border-color: #004B93; background: #fff; }
+  .field-group label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; }
+  .field-group input, .field-group select { border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; font-size: 14px; color: var(--text); background: var(--input-bg); width: 100%; transition: border-color 0.15s; -webkit-appearance: none; appearance: none; }
+  .field-group input:focus, .field-group select:focus { outline: none; border-color: var(--blue); background: var(--card); }
   .field-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; cursor: pointer; }
-
-  .area-selector-card { background: #fff; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid #e4e4e4; }
-  .area-selector-card h2 { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .area-selector-card { background: var(--card); border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; border: 1px solid var(--border); }
+  .area-selector-card h2 { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
   .area-select-wrap { position: relative; }
-  .area-select-wrap select { width: 100%; border: 1.5px solid #004B93; border-radius: 10px; padding: 12px 14px; font-size: 15px; color: #1a1a1a; background: #f0f5ff; font-weight: 500; -webkit-appearance: none; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23004B93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
+  .area-select-wrap select { width: 100%; border: 1.5px solid var(--blue); border-radius: 10px; padding: 12px 14px; font-size: 15px; color: var(--text); background: var(--blue-bg); font-weight: 500; -webkit-appearance: none; appearance: none; cursor: pointer; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23004B93' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
   .area-select-wrap::after { display: none; }
-  .category-badge { display: inline-flex; align-items: center; gap: 6px; background: #e8f0fe; color: #004B93; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; margin-top: 10px; }
-
+  .category-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--blue-light); color: var(--blue); font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; margin-top: 10px; }
   .summary-bar { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .sum-item { background: #fff; border-radius: 12px; border: 1px solid #e4e4e4; padding: 12px; text-align: center; }
+  .sum-item { background: var(--card); border-radius: 12px; border: 1px solid var(--border); padding: 12px; text-align: center; }
   .sum-item .val { font-size: 26px; font-weight: 600; }
-  .sum-item .lbl { font-size: 11px; color: #888; margin-top: 2px; }
-  .ok-color { color: #3B6D11; }
-  .fail-color { color: #A32D2D; }
-  .na-color { color: #888; }
-
-  .items-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
+  .sum-item .lbl { font-size: 11px; color: var(--text3); margin-top: 2px; }
+  .ok-color { color: var(--ok); }
+  .fail-color { color: var(--fail); }
+  .na-color { color: var(--text3); }
+  .items-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 16px; overflow: hidden; }
   .items-card-header { padding: 14px 18px 0; }
-  .items-card-header h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 12px; }
+  .items-card-header h2 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
   .items-table { width: 100%; border-collapse: collapse; }
-  .items-table thead tr { border-bottom: 1px solid #f0f0f0; }
-  .items-table th { font-size: 11px; font-weight: 600; color: #aaa; text-align: left; padding: 8px 12px; text-transform: uppercase; letter-spacing: 0.4px; }
+  .items-table thead tr { border-bottom: 1px solid var(--border); }
+  .items-table th { font-size: 11px; font-weight: 600; color: var(--text4); text-align: left; padding: 8px 12px; text-transform: uppercase; letter-spacing: 0.4px; }
   .items-table th.center { text-align: center; }
-  .items-table td { padding: 10px 12px; border-bottom: 1px solid #f8f8f8; vertical-align: middle; font-size: 13px; color: #333; }
+  .items-table td { padding: 10px 12px; border-bottom: 1px solid var(--row-hover); vertical-align: middle; font-size: 13px; color: var(--text2); }
   .items-table tr:last-child td { border-bottom: none; }
   .radio-group { display: flex; justify-content: center; }
-  .radio-opt { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid #ddd; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.12s; color: #aaa; -webkit-tap-highlight-color: transparent; user-select: none; }
-  .radio-opt:hover { border-color: #bbb; color: #666; background: #f5f5f5; }
-  .radio-opt.ok   { background: #EAF3DE; border-color: #639922; color: #3B6D11; }
-  .radio-opt.fail { background: #FCEBEB; border-color: #E24B4A; color: #A32D2D; }
-  .radio-opt.na   { background: #f3f3f3; border-color: #bbb; color: #888; }
-  .section-divider { font-size: 11px; font-weight: 600; color: #004B93; text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px 4px; background: #f0f5ff; border-top: 1px solid #e4e4e4; border-bottom: 1px solid #e4e4e4; }
-  .obs-wrap { padding: 12px 18px 16px; border-top: 1px solid #f0f0f0; margin-top: 4px; }
-  .obs-label { font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
-  textarea { width: 100%; border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 13px; color: #1a1a1a; background: #fafafa; resize: vertical; min-height: 64px; font-family: inherit; transition: border-color 0.15s; }
-  textarea:focus { outline: none; border-color: #004B93; background: #fff; }
-  .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; }
+  .radio-opt { width: 32px; height: 32px; border-radius: 50%; border: 1.5px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 13px; font-weight: 600; transition: all 0.12s; color: var(--text4); -webkit-tap-highlight-color: transparent; user-select: none; }
+  .radio-opt:hover { border-color: var(--text3); color: var(--text2); background: var(--row-hover); }
+  .radio-opt.ok   { background: var(--ok-bg); border-color: var(--ok); color: var(--ok); }
+  .radio-opt.fail { background: var(--fail-bg); border-color: var(--fail); color: var(--fail); }
+  .radio-opt.na   { background: var(--row-hover); border-color: var(--text3); color: var(--text3); }
+  .section-divider { font-size: 11px; font-weight: 600; color: var(--blue); text-transform: uppercase; letter-spacing: 0.5px; padding: 10px 12px 4px; background: var(--blue-bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .obs-wrap { padding: 12px 18px 16px; border-top: 1px solid var(--border); margin-top: 4px; }
+  .obs-label { font-size: 11px; font-weight: 600; color: var(--text4); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
+  textarea { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 9px 11px; font-size: 13px; color: var(--text); background: var(--input-bg); resize: vertical; min-height: 64px; font-family: inherit; transition: border-color 0.15s; }
+  textarea:focus { outline: none; border-color: var(--blue); background: var(--card); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--text4); font-size: 14px; }
   .empty-state .icon { font-size: 36px; margin-bottom: 10px; }
 
   /* Photos */
-  .photos-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
-  .photos-card h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-  .photos-card p { font-size: 12px; color: #999; margin-bottom: 14px; }
-  .photo-upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border: 1.5px dashed #c0cfe8; border-radius: 10px; background: #f5f8ff; color: #004B93; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; }
-  .photo-upload-btn:hover { background: #eaf0ff; border-color: #004B93; }
+  .photos-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
+  .photos-card h2 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .photos-card p { font-size: 12px; color: var(--text3); margin-bottom: 14px; }
+  .photo-upload-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; padding: 13px; border: 1.5px dashed #c0cfe8; border-radius: 10px; background: var(--blue-bg); color: var(--blue); font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; font-family: inherit; text-align: center; -webkit-tap-highlight-color: transparent; }
+  .photo-upload-btn:hover { background: var(--blue-light); border-color: var(--blue); }
   .photo-upload-btn.disabled { opacity: 0.4; pointer-events: none; }
-
-  /* iOS Safari touch fix — todos los elementos interactivos */
+  /* iOS Safari touch fix */
   button, label, select, input, canvas, .tab-btn, .radio-opt, .report-card-header, .hallazgos-view-btn, .kpi-turno-btn { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
   * { -webkit-touch-callout: none; }
   #photoInput { display: none; }
   .photos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; margin-top: 14px; }
-  .photo-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid #e4e4e4; aspect-ratio: 1; }
+  .photo-thumb { position: relative; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); aspect-ratio: 1; }
   .photo-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .photo-remove { position: absolute; top: 5px; right: 5px; width: 24px; height: 24px; border-radius: 50%; background: rgba(0,0,0,0.55); color: #fff; border: none; font-size: 13px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-  .photo-label-input { width: 100%; border: none; border-top: 1px solid #f0f0f0; padding: 5px 7px; font-size: 11px; color: #555; background: #fff; font-family: inherit; }
-  .photo-label-input:focus { outline: none; background: #fafafa; }
-  .photo-count { font-size: 12px; color: #888; margin-top: 8px; text-align: right; }
-
+  .photo-label-input { width: 100%; border: none; border-top: 1px solid var(--border); padding: 5px 7px; font-size: 11px; color: var(--text2); background: var(--card); font-family: inherit; }
+  .photo-label-input:focus { outline: none; background: var(--input-bg); }
+  .photo-count { font-size: 12px; color: var(--text3); margin-top: 8px; text-align: right; }
   /* Signatures */
   .signatures-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
   @media (max-width: 500px) { .signatures-grid { grid-template-columns: 1fr; } }
-  .signature-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 18px; }
-  .signature-card h2 { font-size: 13px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-  .signature-card p { font-size: 11px; color: #999; margin-bottom: 10px; }
-  .sig-wrap { border: 1.5px dashed #ccc; border-radius: 10px; background: #fafafa; position: relative; overflow: hidden; }
+  .signature-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; }
+  .signature-card h2 { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .signature-card p { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+  .sig-wrap { border: 1.5px dashed var(--text4); border-radius: 10px; background: var(--input-bg); position: relative; overflow: hidden; }
   .sig-canvas { display: block; width: 100%; height: 110px; cursor: crosshair; touch-action: none; }
-  .sig-ph { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; color: #ccc; pointer-events: none; white-space: nowrap; }
-  .sig-name-input { width: 100%; border: none; border-top: 1px solid #f0f0f0; padding: 7px 10px; font-size: 13px; color: #333; background: #fff; font-family: inherit; }
-  .sig-name-input:focus { outline: none; background: #fafafa; }
-  .btn-ghost { font-size: 11px; color: #999; background: none; border: none; padding: 5px 0; cursor: pointer; font-family: inherit; margin-top: 6px; }
-  .btn-ghost:hover { color: #333; }
-
+  .sig-ph { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 12px; color: var(--text4); pointer-events: none; white-space: nowrap; }
+  .sig-name-input { width: 100%; border: none; border-top: 1px solid var(--border); padding: 7px 10px; font-size: 13px; color: var(--text); background: var(--card); font-family: inherit; }
+  .sig-name-input:focus { outline: none; background: var(--input-bg); }
+  .btn-ghost { font-size: 11px; color: var(--text3); background: none; border: none; padding: 5px 0; cursor: pointer; font-family: inherit; margin-top: 6px; }
+  .btn-ghost:hover { color: var(--text); }
   /* Submit */
-  .btn-submit { width: 100%; padding: 15px; background: #004B93; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+  .btn-submit { width: 100%; padding: 15px; background: var(--blue); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
   .btn-submit:hover { opacity: 0.9; }
   .btn-submit:active { opacity: 0.8; transform: scale(0.99); }
   .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
-
   /* Config card */
-  .config-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
-  .config-card h2 { font-size: 14px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-  .config-card p { font-size: 12px; color: #999; margin-bottom: 12px; }
-  .config-card input { border: 1px solid #ddd; border-radius: 8px; padding: 9px 11px; font-size: 13px; color: #1a1a1a; background: #fafafa; width: 100%; font-family: inherit; }
-  .config-card input:focus { outline: none; border-color: #004B93; }
+  .config-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 16px; }
+  .config-card h2 { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .config-card p { font-size: 12px; color: var(--text3); margin-bottom: 12px; }
   .config-status { font-size: 12px; margin-top: 8px; padding: 6px 10px; border-radius: 7px; display: none; }
-  .config-status.ok { background: #EAF3DE; color: #3B6D11; display: block; }
-  .config-status.err { background: #FCEBEB; color: #A32D2D; display: block; }
-
+  .config-status.ok { background: var(--ok-bg); color: var(--ok); display: block; }
+  .config-status.err { background: var(--fail-bg); color: var(--fail); display: block; }
   /* History */
   .history-filters { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
-  .history-filters input, .history-filters select { border: 1px solid #ddd; border-radius: 8px; padding: 8px 11px; font-size: 13px; color: #1a1a1a; background: #fff; font-family: inherit; flex: 1; min-width: 140px; -webkit-appearance: none; appearance: none; cursor: pointer; }
-  .history-empty { text-align: center; padding: 40px 20px; color: #aaa; font-size: 14px; background: #fff; border-radius: 14px; border: 1px solid #e4e4e4; }
-  .report-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; margin-bottom: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
-  .report-card:hover { border-color: #004B93; }
+  .history-filters input, .history-filters select { border: 1px solid var(--border); border-radius: 8px; padding: 8px 11px; font-size: 13px; color: var(--text); background: var(--card); font-family: inherit; flex: 1; min-width: 140px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .history-date-filters { display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap; }
+  .history-date-filters input { border:1px solid var(--border); border-radius:8px; padding:7px 10px; font-size:13px; color:var(--text); background:var(--card); font-family:inherit; flex:1; min-width:130px; }
+  .history-empty { text-align: center; padding: 40px 20px; color: var(--text4); font-size: 14px; background: var(--card); border-radius: 14px; border: 1px solid var(--border); }
+  .report-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; margin-bottom: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.15s; }
+  .report-card:hover { border-color: var(--blue); }
   .report-card-header { padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
-  .report-card-icon { width: 36px; height: 36px; border-radius: 8px; background: #e8f0fe; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .report-card-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--blue-light); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
   .report-card-info { flex: 1; }
-  .report-card-info h3 { font-size: 14px; font-weight: 600; color: #1a1a1a; }
-  .report-card-info p { font-size: 12px; color: #888; margin-top: 2px; }
+  .report-card-info h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+  .report-card-info p { font-size: 12px; color: var(--text3); margin-top: 2px; }
   .report-badges { display: flex; gap: 6px; flex-wrap: wrap; }
   .badge { font-size: 11px; padding: 3px 8px; border-radius: 20px; font-weight: 500; }
-  .badge-ok { background: #EAF3DE; color: #3B6D11; }
-  .badge-fail { background: #FCEBEB; color: #A32D2D; }
-  .badge-na { background: #f3f3f3; color: #888; }
-  .report-detail { display: none; padding: 0 18px 16px; border-top: 1px solid #f0f0f0; }
+  .badge-ok { background: var(--ok-bg); color: var(--ok); }
+  .badge-fail { background: var(--fail-bg); color: var(--fail); }
+  .badge-na { background: var(--row-hover); color: var(--text3); }
+  .report-detail { display: none; padding: 0 18px 16px; border-top: 1px solid var(--border); }
   .report-detail.open { display: block; }
   .detail-section { margin-top: 12px; }
-  .detail-section h4 { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
+  .detail-section h4 { font-size: 12px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 8px; }
   .detail-items { display: flex; flex-direction: column; gap: 4px; }
-  .detail-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #333; }
+  .detail-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text2); }
   .detail-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .dot-ok { background: #639922; }
-  .dot-fail { background: #E24B4A; }
-  .dot-na { background: #bbb; }
-  .dot-null { background: #e0e0e0; }
+  .dot-ok { background: #639922; } .dot-fail { background: #E24B4A; } .dot-na { background: #bbb; } .dot-null { background: var(--border); }
   .detail-photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 8px; }
-  .detail-photo { border-radius: 8px; overflow: hidden; aspect-ratio: 1; border: 1px solid #e4e4e4; }
+  .detail-photo { border-radius: 8px; overflow: hidden; aspect-ratio: 1; border: 1px solid var(--border); }
   .detail-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .detail-photo-label { font-size: 11px; color: #888; padding: 4px 6px; background: #fff; border-top: 1px solid #f0f0f0; }
-  .detail-obs { font-size: 13px; color: #555; background: #fafafa; border-radius: 8px; padding: 10px 12px; margin-top: 6px; }
+  .detail-photo-label { font-size: 11px; color: var(--text3); padding: 4px 6px; background: var(--card); border-top: 1px solid var(--border); }
+  .detail-obs { font-size: 13px; color: var(--text2); background: var(--input-bg); border-radius: 8px; padding: 10px 12px; margin-top: 6px; }
   .detail-sigs { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-  .detail-sig { background: #fafafa; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #f0f0f0; }
+  .detail-sig { background: var(--input-bg); border-radius: 8px; padding: 8px; text-align: center; border: 1px solid var(--border); }
   .detail-sig img { max-width: 100%; border-radius: 4px; }
-  .detail-sig p { font-size: 11px; color: #888; margin-top: 4px; }
-  .sending-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 12px; font-size: 15px; color: #004B93; font-weight: 500; display: none; }
-  .spinner { width: 36px; height: 36px; border: 3px solid #e4e4e4; border-top-color: #004B93; border-radius: 50%; animation: spin 0.7s linear infinite; }
+  .detail-sig p { font-size: 11px; color: var(--text3); margin-top: 4px; }
+  .sending-overlay { position: fixed; inset: 0; background: var(--overlay); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 12px; font-size: 15px; color: var(--blue); font-weight: 500; display: none; }
+  .spinner { width: 36px; height: 36px; border: 3px solid var(--border); border-top-color: var(--blue); border-radius: 50%; animation: spin 0.7s linear infinite; }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #004B93; color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 1000; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,75,147,0.3); }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--blue); color: #fff; padding: 12px 24px; border-radius: 12px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.3s; z-index: 1000; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,75,147,0.3); }
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  .toast.error { background: #A32D2D; }
-  .btn-delete { font-size: 11px; color: #A32D2D; background: none; border: 1px solid #f0c0c0; padding: 5px 10px; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
-  .btn-delete:hover { background: #FCEBEB; border-color: #E24B4A; }
-  .btn-delete-all { font-size: 13px; color: #A32D2D; background: #FCEBEB; border: 1px solid #f0c0c0; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; margin-bottom: 16px; transition: all 0.12s; width: 100%; }
-  .btn-delete-all:hover { background: #f7c1c1; border-color: #E24B4A; }
+  .toast.error { background: var(--fail); }
+  .btn-delete { font-size: 11px; color: var(--fail); background: none; border: 1px solid var(--fail-bg); padding: 5px 10px; border-radius: 7px; cursor: pointer; font-family: inherit; transition: all 0.12s; white-space: nowrap; }
+  .btn-delete:hover { background: var(--fail-bg); border-color: var(--fail); }
+  .btn-delete-all { font-size: 13px; color: var(--fail); background: var(--fail-bg); border: 1px solid #f0c0c0; padding: 9px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; margin-bottom: 16px; transition: all 0.12s; width: 100%; }
   .pin-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; z-index: 1001; }
   .pin-overlay.show { display: flex; }
-  .pin-modal { background: #fff; border-radius: 16px; padding: 24px; width: 300px; max-width: 90vw; }
-  .pin-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: #1a1a1a; }
-  .pin-modal p { font-size: 13px; color: #888; margin-bottom: 16px; }
-  .pin-input { width: 100%; border: 1.5px solid #ddd; border-radius: 8px; padding: 10px 14px; font-size: 22px; text-align: center; letter-spacing: 8px; font-family: inherit; margin-bottom: 8px; }
-  .pin-input:focus { outline: none; border-color: #004B93; }
-  .pin-error { font-size: 12px; color: #A32D2D; margin-bottom: 10px; display: none; text-align: center; }
+  .pin-modal { background: var(--card); border-radius: 16px; padding: 24px; width: 300px; max-width: 90vw; }
+  .pin-modal h3 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .pin-modal p { font-size: 13px; color: var(--text3); margin-bottom: 16px; }
+  .pin-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 22px; text-align: center; letter-spacing: 8px; font-family: inherit; margin-bottom: 8px; background: var(--input-bg); color: var(--text); }
+  .pin-input:focus { outline: none; border-color: var(--blue); }
+  .pin-error { font-size: 12px; color: var(--fail); margin-bottom: 10px; display: none; text-align: center; }
   .pin-error.show { display: block; }
   .pin-actions { display: flex; gap: 8px; margin-top: 8px; }
   .pin-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; border: none; transition: all 0.12s; }
-  .pin-btn-cancel { background: #f3f3f3; color: #666; }
-  .pin-btn-confirm { background: #A32D2D; color: #fff; }
-  .pin-btn-cancel:hover { background: #e8e8e8; }
-  .pin-btn-confirm:hover { opacity: 0.9; }
+  .pin-btn-cancel { background: var(--row-hover); color: var(--text2); }
+  .pin-btn-confirm { background: var(--fail); color: #fff; }
 
   /* KPI Dashboard */
-  .kpi-lock { text-align: center; padding: 40px 20px; background: #fff; border-radius: 14px; border: 1px solid #e4e4e4; }
+  .kpi-lock { text-align: center; padding: 40px 20px; background: var(--card); border-radius: 14px; border: 1px solid var(--border); }
   .kpi-lock .icon { font-size: 40px; margin-bottom: 12px; }
-  .kpi-lock h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
-  .kpi-lock p { font-size: 13px; color: #888; margin-bottom: 16px; }
+  .kpi-lock h2 { font-size: 16px; font-weight: 600; margin-bottom: 6px; color: var(--text); }
+  .kpi-lock p { font-size: 13px; color: var(--text3); margin-bottom: 16px; }
   .kpi-turno-btns { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-  .kpi-turno-btn { padding: 10px 20px; border-radius: 10px; border: 1.5px solid #ddd; background: #fafafa; font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; }
-  .kpi-turno-btn:hover { border-color: #004B93; background: #f0f5ff; color: #004B93; }
-  .kpi-turno-btn.admin { background: #004B93; color: #fff; border-color: #004B93; }
+  .kpi-turno-btn { padding: 10px 20px; border-radius: 10px; border: 1.5px solid var(--border); background: var(--input-bg); font-size: 14px; font-weight: 500; cursor: pointer; font-family: inherit; transition: all 0.15s; color: var(--text); }
+  .kpi-turno-btn:hover { border-color: var(--blue); background: var(--blue-bg); color: var(--blue); }
+  .kpi-turno-btn.admin { background: var(--blue); color: #fff; border-color: var(--blue); }
   .kpi-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 10px; }
-  .kpi-header h2 { font-size: 16px; font-weight: 600; color: #004B93; }
-  .kpi-logout { font-size: 12px; color: #888; background: none; border: 1px solid #ddd; padding: 5px 12px; border-radius: 7px; cursor: pointer; font-family: inherit; }
-  .kpi-logout:hover { color: #333; border-color: #bbb; }
+  .kpi-header h2 { font-size: 16px; font-weight: 600; color: var(--blue); }
+  .kpi-logout { font-size: 12px; color: var(--text3); background: none; border: 1px solid var(--border); padding: 5px 12px; border-radius: 7px; cursor: pointer; font-family: inherit; color: var(--text2); }
   .kpi-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
   @media (max-width: 400px) { .kpi-cards { grid-template-columns: 1fr; } }
-  .kpi-card { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px; text-align: center; }
+  .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; text-align: center; }
   .kpi-card .kpi-val { font-size: 32px; font-weight: 600; margin: 4px 0; }
-  .kpi-card .kpi-lbl { font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 0.4px; }
-  .kpi-card .kpi-sub { font-size: 12px; color: #aaa; margin-top: 4px; }
-  .kpi-section { background: #fff; border: 1px solid #e4e4e4; border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
-  .kpi-section h3 { font-size: 13px; font-weight: 600; color: #888; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 14px; }
+  .kpi-card .kpi-lbl { font-size: 11px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; }
+  .kpi-card .kpi-sub { font-size: 12px; color: var(--text4); margin-top: 4px; }
+  .kpi-section { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px 18px; margin-bottom: 14px; }
+  .kpi-section h3 { font-size: 13px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 14px; }
   .kpi-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
   .kpi-row:last-child { margin-bottom: 0; }
-  .kpi-row-label { font-size: 13px; color: #333; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .kpi-bar-wrap { width: 120px; height: 8px; background: #f0f0f0; border-radius: 4px; flex-shrink: 0; }
-  .kpi-bar { height: 8px; border-radius: 4px; background: #004B93; transition: width 0.4s; }
-  .kpi-bar.danger { background: #E24B4A; }
-  .kpi-bar.warning { background: #EF9F27; }
-  .kpi-bar.good { background: #639922; }
-  .kpi-pct { font-size: 12px; font-weight: 600; color: #333; width: 36px; text-align: right; flex-shrink: 0; }
+  .kpi-row-label { font-size: 13px; color: var(--text2); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .kpi-bar-wrap { width: 120px; height: 8px; background: var(--row-hover); border-radius: 4px; flex-shrink: 0; }
+  .kpi-bar { height: 8px; border-radius: 4px; background: var(--blue); transition: width 0.4s; }
+  .kpi-bar.danger { background: #E24B4A; } .kpi-bar.warning { background: #EF9F27; } .kpi-bar.good { background: #639922; }
+  .kpi-pct { font-size: 12px; font-weight: 600; color: var(--text2); width: 36px; text-align: right; flex-shrink: 0; }
   .kpi-trend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; }
-  .kpi-trend-item { background: #f8f9fa; border-radius: 8px; padding: 8px; text-align: center; border: 1px solid #f0f0f0; }
-  .kpi-trend-item .t-val { font-size: 16px; font-weight: 600; color: #004B93; }
-  .kpi-trend-item .t-lbl { font-size: 10px; color: #aaa; margin-top: 2px; }
+  .kpi-trend-item { background: var(--input-bg); border-radius: 8px; padding: 8px; text-align: center; border: 1px solid var(--border); }
+  .kpi-trend-item .t-val { font-size: 16px; font-weight: 600; color: var(--blue); }
+  .kpi-trend-item .t-lbl { font-size: 10px; color: var(--text4); margin-top: 2px; }
   .kpi-filter-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .kpi-filter-row select { border: 1px solid #ddd; border-radius: 8px; padding: 7px 10px; font-size: 13px; background: #fafafa; font-family: inherit; color: #333; flex: 1; min-width: 120px; -webkit-appearance: none; appearance: none; cursor: pointer; }
-  .kpi-empty { text-align: center; padding: 20px; color: #aaa; font-size: 13px; }
-  .badge-turno-a { background: #e8f0fe; color: #004B93; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
-  .badge-turno-b { background: #FFF7E6; color: #BA7517; font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .kpi-filter-row select { border: 1px solid var(--border); border-radius: 8px; padding: 7px 10px; font-size: 13px; background: var(--input-bg); font-family: inherit; color: var(--text); flex: 1; min-width: 120px; -webkit-appearance: none; appearance: none; cursor: pointer; }
+  .kpi-empty { text-align: center; padding: 20px; color: var(--text4); font-size: 13px; }
+  .badge-turno-a { background: var(--blue-light); color: var(--blue); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
+  .badge-turno-b { background: var(--warn-bg); color: var(--warn); font-size: 11px; padding: 2px 8px; border-radius: 20px; font-weight: 500; }
   @media print { body { background: #fff; } .tabs, .btn-submit, .btn-ghost, .photo-upload-btn, .photo-remove, .sending-overlay, .pin-overlay { display: none !important; } .tab-content { display: block !important; } }
 
   /* Hallazgos */
-  .hallazgos-view-btn { flex:1; padding:10px 16px; border-radius:10px; border:1.5px solid #ddd; background:#fafafa; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; color:#666; }
-  .hallazgos-view-btn.active { background:#004B93; color:#fff; border-color:#004B93; }
-  .hallazgo-card { background:#fff; border:1px solid #e4e4e4; border-radius:14px; margin-bottom:12px; overflow:hidden; }
+  .hallazgos-view-btn { flex:1; padding:10px 16px; border-radius:10px; border:1.5px solid var(--border); background:var(--input-bg); font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; color:var(--text2); }
+  .hallazgos-view-btn.active { background:var(--blue); color:#fff; border-color:var(--blue); }
+  .hallazgo-card { background:var(--card); border:1px solid var(--border); border-radius:14px; margin-bottom:12px; overflow:hidden; }
   .hallazgo-card.critico { border-left:4px solid #E24B4A; }
   .hallazgo-card.reciente { border-left:4px solid #EF9F27; }
+  .hallazgo-card.alta { border-left:4px solid #A32D2D; }
+  .hallazgo-card.media { border-left:4px solid #EF9F27; }
+  .hallazgo-card.baja { border-left:4px solid #639922; }
   .hallazgo-card.cerrado { border-left:4px solid #639922; opacity:0.85; }
   .hallazgo-header { padding:14px 16px; display:flex; align-items:flex-start; gap:12px; }
   .hallazgo-dias { min-width:44px; height:44px; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center; flex-shrink:0; }
-  .hallazgo-dias.critico { background:#FCEBEB; }
-  .hallazgo-dias.reciente { background:#FFF7E6; }
-  .hallazgo-dias.cerrado { background:#EAF3DE; }
+  .hallazgo-dias.critico,.hallazgo-dias.alta { background:var(--fail-bg); }
+  .hallazgo-dias.reciente,.hallazgo-dias.media { background:var(--warn-bg); }
+  .hallazgo-dias.cerrado,.hallazgo-dias.baja { background:var(--ok-bg); }
   .hallazgo-dias .d-num { font-size:16px; font-weight:700; line-height:1; }
-  .hallazgo-dias.critico .d-num { color:#A32D2D; }
-  .hallazgo-dias.reciente .d-num { color:#BA7517; }
-  .hallazgo-dias.cerrado .d-num { color:#3B6D11; }
-  .hallazgo-dias .d-lbl { font-size:9px; color:#aaa; text-transform:uppercase; letter-spacing:0.3px; margin-top:1px; }
+  .hallazgo-dias.critico .d-num,.hallazgo-dias.alta .d-num { color:var(--fail); }
+  .hallazgo-dias.reciente .d-num,.hallazgo-dias.media .d-num { color:var(--warn); }
+  .hallazgo-dias.cerrado .d-num,.hallazgo-dias.baja .d-num { color:var(--ok); }
+  .hallazgo-dias .d-lbl { font-size:9px; color:var(--text4); text-transform:uppercase; letter-spacing:0.3px; margin-top:1px; }
   .hallazgo-info { flex:1; min-width:0; }
-  .hallazgo-info h3 { font-size:14px; font-weight:600; color:#1a1a1a; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .hallazgo-info p { font-size:12px; color:#888; margin-top:2px; }
-  .hallazgo-desc { font-size:13px; color:#555; background:#fafafa; border-radius:8px; padding:10px 12px; margin:0 16px 12px; }
+  .hallazgo-info h3 { font-size:14px; font-weight:600; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .hallazgo-info p { font-size:12px; color:var(--text3); margin-top:2px; }
+  .hallazgo-desc { font-size:13px; color:var(--text2); background:var(--input-bg); border-radius:8px; padding:10px 12px; margin:0 16px 12px; }
+  .hallazgo-accion { font-size:13px; color:var(--text2); background:var(--ok-bg); border-radius:8px; padding:10px 12px; margin:0 16px 12px; border-left:3px solid var(--ok); }
   .hallazgo-actions { padding:0 16px 14px; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
-  .btn-resolver { padding:8px 16px; background:#004B93; color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; }
+  .btn-resolver { padding:8px 16px; background:var(--blue); color:#fff; border:none; border-radius:8px; font-size:13px; font-weight:500; cursor:pointer; font-family:inherit; transition:all 0.15s; }
   .btn-resolver:hover { opacity:0.9; }
-  .hallazgo-empty { text-align:center; padding:40px 20px; background:#fff; border-radius:14px; border:1px solid #e4e4e4; color:#aaa; font-size:14px; }
-  .btn-abrir-hallazgo { font-size:11px; color:#A32D2D; background:#FCEBEB; border:1px solid #f0c0c0; padding:5px 10px; border-radius:7px; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.12s; margin-left:6px; }
-  .btn-abrir-hallazgo:hover { background:#f7c1c1; }
+  .hallazgo-empty { text-align:center; padding:40px 20px; background:var(--card); border-radius:14px; border:1px solid var(--border); color:var(--text4); font-size:14px; }
+  .btn-abrir-hallazgo { font-size:11px; color:var(--fail); background:var(--fail-bg); border:1px solid #f0c0c0; padding:5px 10px; border-radius:7px; cursor:pointer; font-family:inherit; white-space:nowrap; transition:all 0.12s; margin-left:6px; }
   .hallazgo-badge-count { background:#E24B4A; color:#fff; font-size:10px; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:4px; vertical-align:middle; }
+  /* Prioridad badges */
+  .prioridad-alta { background:var(--fail-bg); color:var(--fail); font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
+  .prioridad-media { background:var(--warn-bg); color:var(--warn); font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
+  .prioridad-baja { background:var(--ok-bg); color:var(--ok); font-size:11px; padding:2px 8px; border-radius:20px; font-weight:600; }
+  /* Modal genérico para hallazgo y confirmación */
+  .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.5); display:none; align-items:center; justify-content:center; z-index:1002; padding:16px; }
+  .modal-overlay.show { display:flex; }
+  .modal-box { background:var(--card); border-radius:16px; padding:24px; width:100%; max-width:400px; }
+  .modal-box h3 { font-size:16px; font-weight:600; color:var(--text); margin-bottom:6px; }
+  .modal-box p { font-size:13px; color:var(--text3); margin-bottom:16px; }
+  .modal-field { display:flex; flex-direction:column; gap:5px; margin-bottom:14px; }
+  .modal-field label { font-size:11px; font-weight:600; color:var(--text3); text-transform:uppercase; letter-spacing:0.4px; }
+  .modal-field input, .modal-field select, .modal-field textarea { border:1px solid var(--border); border-radius:8px; padding:9px 11px; font-size:14px; color:var(--text); background:var(--input-bg); font-family:inherit; width:100%; -webkit-appearance:none; }
+  .modal-field textarea { min-height:80px; resize:vertical; }
+  .modal-actions { display:flex; gap:8px; margin-top:4px; }
+  .modal-btn { flex:1; padding:11px; border-radius:8px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit; border:none; }
+  .modal-btn-cancel { background:var(--row-hover); color:var(--text2); }
+  .modal-btn-confirm { background:var(--blue); color:#fff; }
+  .modal-btn-danger { background:var(--fail); color:#fff; }
+  /* Ítem sin marcar highlight */
+  .item-unmarked td { background: var(--warn-bg) !important; }
+  /* Ronda de hoy */
+  .ronda-item { display:flex; align-items:center; gap:10px; padding:9px 12px; border-radius:10px; margin-bottom:6px; cursor:pointer; transition:all 0.15s; border:1px solid var(--border); background:var(--input-bg); }
+  .ronda-item:hover { border-color:var(--blue); background:var(--blue-bg); }
+  .ronda-item.done { opacity:0.6; background:var(--ok-bg); border-color:var(--ok); cursor:default; }
+  .ronda-item.done:hover { background:var(--ok-bg); border-color:var(--ok); }
+  .ronda-zona { font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;background:var(--blue-light);color:var(--blue);white-space:nowrap; }
+  .ronda-area { font-size:13px;font-weight:500;color:var(--text);flex:1; }
+  .ronda-check { font-size:16px;flex-shrink:0; }
 </style>
 </head>
 <body>
 
 <div class="sending-overlay" id="sendingOverlay">
   <div class="spinner"></div>
-  <span>Guardando revisión...</span>
+  <span id="sendingMsg">Guardando revisión...</span>
 </div>
 
 <div class="page">
@@ -268,6 +297,7 @@
       <h1>Revisión de Áreas — Supervisores</h1>
       <p>Sodexo @ ICU Medical &nbsp;·&nbsp; Servicio de limpieza y cafetería</p>
     </div>
+    <button class="theme-toggle" onclick="toggleTheme()" type="button" id="themeBtn">🌙 Oscuro</button>
   </div>
 
   <!-- Tabs -->
@@ -283,18 +313,30 @@
   <div class="tab-content active" id="tab-form">
     <div class="meta-card">
       <div class="meta-grid three">
-        <div class="field-group"><label>Fecha</label><input type="date" id="fecha" /></div>
+        <div class="field-group"><label>Fecha</label><input type="date" id="fecha" onchange="cargarRondaHoy()" /></div>
         <div class="field-group"><label>Turno</label>
           <select id="turno"><option value="">Seleccionar</option><option>Turno A</option><option>Turno B</option></select>
         </div>
         <div class="field-group"><label>Supervisor</label>
-          <select id="supervisor">
+          <select id="supervisor" onchange="cargarRondaHoy()">
             <option value="">Seleccionar</option>
             <option value="Douglas Aguilar">Douglas Aguilar</option>
             <option value="Efrain Seas">Efrain Seas</option>
           </select>
         </div>
       </div>
+    </div>
+
+    <!-- Ronda de hoy -->
+    <div id="rondaHoy" style="display:none;" class="meta-card" style="padding:0;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;">📅 Mi ronda de hoy</div>
+          <div id="rondaFecha" style="font-size:12px;color:var(--text3);margin-top:2px;"></div>
+        </div>
+        <div id="rondaProgress" style="font-size:13px;font-weight:600;color:var(--blue);"></div>
+      </div>
+      <div id="rondaItems"></div>
     </div>
 
     <div class="area-selector-card">
@@ -356,6 +398,10 @@
         <option>Turno B</option>
       </select>
     </div>
+    <div class="history-date-filters">
+      <input type="date" id="filterFechaDesde" onchange="renderHistory()" placeholder="Desde" />
+      <input type="date" id="filterFechaHasta" onchange="renderHistory()" placeholder="Hasta" />
+    </div>
     <div id="historyList"></div>
   </div>
 
@@ -411,29 +457,79 @@
   <!-- CONFIG TAB -->
   <div class="tab-content" id="tab-config">
     <div class="config-card">
-      <h2>Conexión con Google Sheets</h2>
-      <p>Pega aquí la URL de tu Google Apps Script Web App para activar el guardado en la nube.</p>
-      <input type="text" id="scriptUrl" placeholder="https://script.google.com/macros/s/..." oninput="saveScriptUrl()" />
-      <div class="config-status" id="configStatus"></div>
+      <h2>Estado de conexión</h2>
+      <p>El sistema está conectado a Supabase para sincronización en tiempo real.</p>
+      <div class="config-status ok" style="display:block;">✓ Conectado a Supabase — datos sincronizados en todos los dispositivos</div>
     </div>
     <div class="config-card" style="margin-top:0;">
-      <h2>Instrucciones de configuración</h2>
-      <p style="margin-bottom:8px;">Sigue estos pasos una sola vez para activar el guardado en Google Sheets:</p>
-      <ol style="font-size:13px; color:#555; line-height:2; padding-left:18px;">
-        <li>Abre <strong>Google Drive</strong> y crea una hoja de cálculo nueva llamada <em>"Revisiones Sodexo"</em></li>
-        <li>En el menú de la hoja ve a <strong>Extensiones → Apps Script</strong></li>
-        <li>Borra el código que aparece y pega el código del archivo <strong>apps_script.gs</strong> que se adjunta</li>
-        <li>Haz clic en <strong>Guardar</strong> (ícono de disco)</li>
-        <li>Haz clic en <strong>Implementar → Nueva implementación</strong></li>
-        <li>Tipo: <strong>Aplicación web</strong> · Ejecutar como: <strong>Yo</strong> · Acceso: <strong>Cualquier usuario</strong></li>
-        <li>Haz clic en <strong>Implementar</strong> y autoriza los permisos</li>
-        <li>Copia la <strong>URL de la aplicación web</strong> y pégala arriba en el campo de configuración</li>
-      </ol>
+      <h2>PINs de acceso</h2>
+      <p style="margin-bottom:8px; font-size:13px; color:#555;">Los PINs de acceso a los KPIs están configurados en el sistema. Contactá al administrador si necesitás cambiarlos.</p>
+      <div style="background:#f0f5ff;border-radius:8px;padding:12px 14px;font-size:13px;color:#004B93;">
+        🔵 Turno A &nbsp;·&nbsp; 🟠 Turno B &nbsp;·&nbsp; 🔐 Administrador
+      </div>
     </div>
   </div>
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- Modal hallazgo -->
+<div class="modal-overlay" id="hallazgoModal">
+  <div class="modal-box">
+    <h3>📌 Abrir hallazgo</h3>
+    <p id="hallazgoModalDesc">Ítem con problema</p>
+    <div class="modal-field">
+      <label>Prioridad</label>
+      <select id="hallazgoPrioridad">
+        <option value="Alta">🔴 Alta</option>
+        <option value="Media" selected>🟡 Media</option>
+        <option value="Baja">🟢 Baja</option>
+      </select>
+    </div>
+    <div class="modal-field">
+      <label>Descripción del problema</label>
+      <textarea id="hallazgoDesc" placeholder="Describí el hallazgo encontrado..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModalHallazgo()" type="button">Cancelar</button>
+      <button class="modal-btn modal-btn-confirm" onclick="confirmarHallazgo()" type="button">Registrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal resolver hallazgo -->
+<div class="modal-overlay" id="resolverModal">
+  <div class="modal-box">
+    <h3>✓ Resolver hallazgo</h3>
+    <p id="resolverModalDesc">Confirmar cierre</p>
+    <div class="modal-field">
+      <label>¿Qué acción se tomó?</label>
+      <textarea id="resolverAccion" placeholder="Describí la acción correctiva tomada..."></textarea>
+    </div>
+    <div class="modal-field">
+      <label>Tu nombre para confirmar</label>
+      <input type="text" id="resolverNombre" placeholder="Nombre del supervisor" />
+    </div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarModalResolver()" type="button">Cancelar</button>
+      <button class="modal-btn modal-btn-confirm" onclick="confirmarResolver()" type="button">Marcar resuelto</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal confirmación guardar revisión -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <h3>✓ Confirmar revisión</h3>
+    <p>Revisá el resumen antes de guardar:</p>
+    <div id="confirmSummary" style="background:var(--input-bg);border-radius:10px;padding:14px;margin-bottom:16px;font-size:13px;line-height:1.8;color:var(--text2);"></div>
+    <div id="confirmWarning" style="display:none;background:var(--warn-bg);border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--warn);font-weight:500;"></div>
+    <div class="modal-actions">
+      <button class="modal-btn modal-btn-cancel" onclick="cerrarConfirm()" type="button">Revisar</button>
+      <button class="modal-btn modal-btn-confirm" onclick="guardarConfirmado()" type="button" id="confirmGuardarBtn">Guardar ✓</button>
+    </div>
+  </div>
+</div>
 
 <div class="pin-overlay" id="pinOverlay">
   <div class="pin-modal">
@@ -519,13 +615,47 @@ const areas = [
   {name:"Desinfección y colocación kits CR4",cat:"kits"},{name:"Desinfección y colocación kits Facilidades",cat:"kits"}
 ];
 
+// ─── SUPABASE CONFIG ──────────────────────────────────────────────────────────
+const SUPABASE_URL = "https://bfrumvrodtanenywylgr.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmcnVtdnJvZHRhbmVueXd5bGdyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ2MzQ5MzcsImV4cCI6MjA5MDIxMDkzN30.gtBjp86PXKlOvAICxT3U5CUJTTk-wAUpyho6RFtsyN4";
+const SB_HEADERS = { "Content-Type": "application/json", "apikey": SUPABASE_KEY, "Authorization": "Bearer " + SUPABASE_KEY, "Prefer": "return=minimal" };
+
+async function sbInsert(table, data) {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}`, {
+    method: "POST", headers: SB_HEADERS, body: JSON.stringify(data)
+  });
+  return res.ok;
+}
+
+async function sbSelect(table, order = "report_id.desc") {
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?order=${order}&limit=500`, {
+    method: "GET", headers: { ...SB_HEADERS, "Prefer": "return=representation" }
+  });
+  if (!res.ok) return [];
+  return res.json();
+}
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
 let currentStates = {};
 let currentArea = null;
 let photos = [];
 const MAX_PHOTOS = 10;
 let reports = JSON.parse(localStorage.getItem("sdx_reports") || "[]");
-let scriptUrl = localStorage.getItem("sdx_script_url") || "https://script.google.com/macros/s/AKfycbz__KyGjP9EtUgYN8RXLyFsgZMJeRf1ny05scnPCVeaicIoR4a2KILs-w6ADEM-XjRq/exec";
+// ─── TEMA ─────────────────────────────────────────────────────────────────────
+function toggleTheme() {
+  const isDark = document.documentElement.getAttribute("data-theme") === "dark";
+  const newTheme = isDark ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", newTheme);
+  localStorage.setItem("sdx_theme", newTheme);
+  document.getElementById("themeBtn").textContent = newTheme === "dark" ? "☀️ Claro" : "🌙 Oscuro";
+}
+function initTheme() {
+  const saved = localStorage.getItem("sdx_theme") || "light";
+  document.documentElement.setAttribute("data-theme", saved);
+  const btn = document.getElementById("themeBtn");
+  if (btn) btn.textContent = saved === "dark" ? "☀️ Claro" : "🌙 Oscuro";
+}
+
 // ─── TABS ─────────────────────────────────────────────────────────────────────
 function switchTab(tab) {
   document.querySelectorAll(".tab-btn").forEach((b,i) => b.classList.toggle("active", ["form","history","hallazgos","kpi","config"][i]===tab));
@@ -534,32 +664,80 @@ function switchTab(tab) {
   if (tab === "history") { syncAndRenderHistory(); }
   if (tab === "hallazgos") renderHallazgos();
   if (tab === "kpi") initKpiTab();
-  if (tab === "config") {
-    document.getElementById("scriptUrl").value = scriptUrl;
-    updateConfigStatus();
-  }
-}
-
-// ─── CONFIG ───────────────────────────────────────────────────────────────────
-function saveScriptUrl() {
-  scriptUrl = document.getElementById("scriptUrl").value.trim();
-  localStorage.setItem("sdx_script_url", scriptUrl);
-  updateConfigStatus();
-}
-function updateConfigStatus() {
-  const el = document.getElementById("configStatus");
-  if (!scriptUrl) { el.className = "config-status"; return; }
-  if (scriptUrl.startsWith("https://script.google.com")) {
-    el.className = "config-status ok"; el.textContent = "✓ URL configurada correctamente";
-  } else {
-    el.className = "config-status err"; el.textContent = "⚠ La URL no parece válida. Verifica que sea de Google Apps Script.";
-  }
 }
 
 // ─── SELECT ───────────────────────────────────────────────────────────────────
 function buildSelect() {
   const sel = document.getElementById("areaSelect");
   areas.forEach((a,i) => { const o = document.createElement("option"); o.value=i; o.textContent=a.name; sel.appendChild(o); });
+}
+
+// ─── RONDA DE HOY ─────────────────────────────────────────────────────────────
+let rondaCache = null;
+
+async function cargarRondaHoy() {
+  const supervisor = document.getElementById("supervisor").value;
+  const fecha = document.getElementById("fecha").value;
+  const rondaDiv = document.getElementById("rondaHoy");
+
+  if (!supervisor || !fecha) { rondaDiv.style.display = "none"; return; }
+
+  // Traer del cronograma en Supabase
+  try {
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/cronograma?supervisor=eq.${encodeURIComponent(supervisor)}&fecha=eq.${fecha}&order=zona.asc`,
+      { headers: { ...SB_HEADERS, "Prefer": "return=representation" } }
+    );
+    const data = res.ok ? await res.json() : [];
+    rondaCache = data;
+
+    if (!data.length) { rondaDiv.style.display = "none"; return; }
+
+    renderRondaHoy(data, fecha);
+    rondaDiv.style.display = "block";
+  } catch(e) {
+    rondaDiv.style.display = "none";
+  }
+}
+
+function renderRondaHoy(data, fecha) {
+  // Ver cuáles ya fueron revisadas hoy
+  const revisadasHoy = new Set(
+    reports.filter(r => r.fecha === fecha).map(r => r.area)
+  );
+
+  const hechas = data.filter(r => revisadasHoy.has(r.area)).length;
+  const total = data.length;
+
+  document.getElementById("rondaFecha").textContent =
+    new Date(fecha + "T12:00:00").toLocaleDateString("es-CR", { weekday:"long", day:"numeric", month:"long" });
+  document.getElementById("rondaProgress").textContent = `${hechas} / ${total} ✓`;
+
+  document.getElementById("rondaItems").innerHTML = data.map(item => {
+    const done = revisadasHoy.has(item.area);
+    return `<div class="ronda-item ${done ? "done" : ""}" data-area="${item.area.replace(/"/g,'&quot;')}" onclick="seleccionarAreaRonda(this)">
+      <span class="ronda-zona">${item.zona}</span>
+      <span class="ronda-area">${item.area}</span>
+      <span class="ronda-check">${done ? "✅" : "○"}</span>
+    </div>`;
+  }).join("");
+}
+
+function seleccionarAreaRonda(el) {
+  if (el.classList.contains("done")) return;
+  const areaName = el.getAttribute("data-area");
+  // Búsqueda exacta primero
+  let idx = areas.findIndex(a => a.name === areaName);
+  // Si no encuentra, buscar normalizando (ignorar diferencias de encoding)
+  if (idx === -1) {
+    const norm = s => s.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().trim();
+    idx = areas.findIndex(a => norm(a.name) === norm(areaName));
+  }
+  if (idx === -1) { showToast("Área no encontrada: " + areaName, "error"); return; }
+  const sel = document.getElementById("areaSelect");
+  sel.value = idx;
+  loadArea();
+  sel.scrollIntoView({ behavior: "smooth", block: "center" });
 }
 
 function loadArea() {
@@ -702,6 +880,8 @@ function initSig(n){
 function clearSig(n){ const c=document.getElementById("sig"+n); sigs[n].ctx.clearRect(0,0,c.width,c.height); sigs[n].hasData=false; document.getElementById("ph"+n).style.display="block"; }
 
 // ─── SUBMIT ───────────────────────────────────────────────────────────────────
+let pendingReport = null;
+
 async function submitForm() {
   const fecha=document.getElementById("fecha").value;
   const supervisor=document.getElementById("supervisor").value.trim();
@@ -734,28 +914,67 @@ async function submitForm() {
     na: Object.values(currentStates[currentArea]?.items||{}).filter(v=>v==="na").length
   };
 
+  // Mostrar modal de confirmación
+  pendingReport = report;
+  const sinMarcar = report.items.filter(i => !i.status).length;
+  const pct = report.ok + report.fail > 0 ? Math.round((report.ok/(report.ok+report.fail))*100) : 0;
+  document.getElementById("confirmSummary").innerHTML = `
+    <strong>Área:</strong> ${report.area}<br>
+    <strong>Supervisor:</strong> ${report.supervisor} &nbsp;·&nbsp; ${report.turno}<br>
+    <strong>Fecha:</strong> ${report.fecha}<br>
+    <strong>Ítems:</strong> ✓ ${report.ok} cumple &nbsp;·&nbsp; ✗ ${report.fail} no cumple &nbsp;·&nbsp; — ${report.na} N/A<br>
+    <strong>Cumplimiento:</strong> <span style="font-weight:700;color:${pct>=90?'var(--ok)':pct>=70?'var(--warn)':'var(--fail)'}">${pct}%</span><br>
+    <strong>Fotos:</strong> ${report.photos.length} adjuntas
+  `;
+  const warning = document.getElementById("confirmWarning");
+  if (sinMarcar > 0) {
+    warning.style.display = "block";
+    warning.textContent = `⚠ ${sinMarcar} ítem${sinMarcar>1?'s':''} sin marcar. Se guardarán como "sin revisar".`;
+  } else {
+    warning.style.display = "none";
+  }
+  document.getElementById("confirmModal").classList.add("show");
+}
+
+function cerrarConfirm() {
+  document.getElementById("confirmModal").classList.remove("show");
+  pendingReport = null;
+}
+
+async function guardarConfirmado() {
+  if (!pendingReport) return;
+  const report = pendingReport;
+  pendingReport = null;
+  document.getElementById("confirmModal").classList.remove("show");
+
+  // Registrar actividad
+  registrarActividad(report.supervisor);
+
   // Save locally
   reports.unshift(report);
   localStorage.setItem("sdx_reports", JSON.stringify(reports));
 
-  // Send to Google Sheets if configured
-  if (scriptUrl && scriptUrl.startsWith("https://script.google.com")) {
-    document.getElementById("sendingOverlay").style.display="flex";
-    document.getElementById("submitBtn").disabled=true;
-    const saved = await sendToSheets(report);
-    if (saved) {
-      showToast("Revisión guardada en Google Sheets ✓");
-    } else {
-      showToast("Guardado local ✓ — sin conexión a Sheets");
-    }
-    document.getElementById("sendingOverlay").style.display="none";
-    document.getElementById("submitBtn").disabled=false;
+  // Guardar en Supabase
+  document.getElementById("sendingOverlay").style.display="flex";
+  document.getElementById("sendingMsg").textContent = report.photos.length > 0 ? "Subiendo fotos y firmas..." : "Guardando revisión...";
+  document.getElementById("submitBtn").disabled=true;
+  const saved = await sendToSheets(report);
+  if (saved) {
+    showToast("Revisión guardada ✓");
   } else {
-    showToast("Revisión guardada localmente ✓");
+    showToast("Guardado local ✓ — reintentará al abrir Historial");
   }
-
-  // Reset form
+  document.getElementById("sendingOverlay").style.display="none";
+  document.getElementById("submitBtn").disabled=false;
   resetForm();
+  cargarRondaHoy();
+}
+
+// ─── ACTIVIDAD ────────────────────────────────────────────────────────────────
+function registrarActividad(supervisor) {
+  const actividad = JSON.parse(localStorage.getItem("sdx_actividad") || "{}");
+  actividad[supervisor] = new Date().toISOString();
+  localStorage.setItem("sdx_actividad", JSON.stringify(actividad));
 }
 
 function resetForm() {
@@ -773,183 +992,160 @@ function resetForm() {
   document.getElementById("categoryBadge").style.display="none";
 }
 
-// ─── SYNC ─────────────────────────────────────────────────────────────────────
-// ─── SEND TO SHEETS (compatible con móvil — usa GET para evitar CORS) ─────────
-// ─── SEND TO SHEETS (iframe — compatible con Chrome Android) ──────────────────
-function sendToSheets(report) {
-  return new Promise((resolve) => {
-    if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) {
-      resolve(false); return;
-    }
-    try {
-      const payload = {
-        action:        "save_main",
-        id:            String(report.id),
-        fecha:         report.fecha,
-        turno:         report.turno,
-        supervisor:    report.supervisor,
-        area:          report.area,
-        categoria:     report.categoria,
-        icono:         report.icono,
-        ok:            report.ok,
-        fail:          report.fail,
-        na:            report.na,
-        observaciones: report.observaciones || "",
-        sigName1:      report.sigName1 || "",
-        sigName2:      report.sigName2 || "",
-        items:         JSON.stringify(report.items || [])
-      };
-
-      // Crear formulario oculto que hace POST real sin restricciones CORS
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = scriptUrl;
-      form.target = "_sdx_iframe_" + report.id;
-      form.style.display = "none";
-
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "payload";
-      input.value = JSON.stringify(payload);
-      form.appendChild(input);
-
-      // iframe oculto como destino del form
-      const iframe = document.createElement("iframe");
-      iframe.name = form.target;
-      iframe.style.display = "none";
-      iframe.onload = () => {
-        setTimeout(() => {
-          form.remove();
-          iframe.remove();
-        }, 2000);
-        // Subir media en segundo plano
-        uploadMediaBackground(report);
-        clearPending(report.id);
-        resolve(true);
-      };
-      iframe.onerror = () => {
-        form.remove(); iframe.remove();
-        markPending(report.id);
-        resolve(false);
-      };
-      // Timeout de seguridad
-      setTimeout(() => {
-        if (document.body.contains(iframe)) {
-          form.remove(); iframe.remove();
-          uploadMediaBackground(report);
-          clearPending(report.id);
-          resolve(true); // asumir éxito si no hubo error explícito
-        }
-      }, 8000);
-
-      document.body.appendChild(iframe);
-      document.body.appendChild(form);
-      form.submit();
-    } catch(e) {
-      markPending(report.id);
-      resolve(false);
-    }
-  });
+// ─── STORAGE HELPERS ──────────────────────────────────────────────────────────
+async function uploadToStorage(path, base64Data) {
+  try {
+    // Convertir base64 a blob
+    const res = await fetch(base64Data);
+    const blob = await res.blob();
+    const uploadRes = await fetch(`${SUPABASE_URL}/storage/v1/object/revisiones/${path}`, {
+      method: "POST",
+      headers: {
+        "apikey": SUPABASE_KEY,
+        "Authorization": "Bearer " + SUPABASE_KEY,
+        "Content-Type": blob.type || "image/jpeg",
+        "x-upsert": "true"
+      },
+      body: blob
+    });
+    if (!uploadRes.ok) return null;
+    return `${SUPABASE_URL}/storage/v1/object/public/revisiones/${path}`;
+  } catch(e) {
+    console.error("Storage upload error:", e);
+    return null;
+  }
 }
 
-// Sube fotos y firmas en segundo plano
-async function uploadMediaBackground(report) {
-  if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) return;
-  const id = String(report.id);
+// ─── GUARDAR EN SUPABASE ──────────────────────────────────────────────────────
+async function sendToSheets(report) {
   try {
-    for (let i = 0; i < (report.photos||[]).length; i++) {
+    const id = String(report.id);
+
+    // Subir fotos al Storage y obtener URLs
+    const photosWithUrls = [];
+    for (let i = 0; i < (report.photos || []).length; i++) {
       const p = report.photos[i];
-      await fetchPost({ action:"save_photo", id, photo_index:i, label:p.label||"", src:p.src||"" });
-    }
-    for (const tipo of ["sig1","sig2"]) {
-      await fetchPost({ action:"save_sig", id, tipo, data: report[tipo]||"" });
-    }
-  } catch(e) { /* silencioso */ }
-}
-
-async function fetchPost(payload) {
-  return fetch(scriptUrl, { method:"POST", body: JSON.stringify(payload) });
-}
-
-function markPending(id) {
-  let pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
-  if (!pending.includes(String(id))) pending.push(String(id));
-  localStorage.setItem("sdx_pending", JSON.stringify(pending));
-}
-
-function clearPending(id) {
-  let pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
-  pending = pending.filter(x => x !== String(id));
-  localStorage.setItem("sdx_pending", JSON.stringify(pending));
-}
-
-// ─── SYNC ─────────────────────────────────────────────────────────────────────
-async function syncAndRenderHistory() {
-  renderHistory();
-  if (!scriptUrl || !scriptUrl.startsWith("https://script.google.com")) return;
-
-  const list = document.getElementById("historyList");
-  const syncBar = document.createElement("div");
-  syncBar.id = "syncBar";
-  syncBar.style.cssText = "background:#e8f0fe;color:#004B93;font-size:12px;font-weight:500;padding:8px 14px;border-radius:10px;margin-bottom:12px;display:flex;align-items:center;gap:8px;";
-  syncBar.innerHTML = `<span style="display:inline-block;width:12px;height:12px;border:2px solid #c0cfe8;border-top-color:#004B93;border-radius:50%;animation:spin 0.7s linear infinite;"></span> Sincronizando con Google Sheets...`;
-  list.insertAdjacentElement("beforebegin", syncBar);
-
-  try {
-    // 1. Reintentar enviar revisiones pendientes locales
-    const pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
-    for (const pid of pending) {
-      const r = reports.find(x => String(x.id) === pid);
-      if (r) {
-        try {
-          await fetch(scriptUrl, { method: "POST", body: JSON.stringify(r) });
-          clearPending(pid);
-        } catch(e) {}
+      if (p.src && p.src.startsWith("data:")) {
+        const url = await uploadToStorage(`fotos/${id}_${i}.jpg`, p.src);
+        photosWithUrls.push({ label: p.label, src: url || p.src });
+      } else {
+        photosWithUrls.push(p);
       }
     }
 
-    // 2. Traer todas las revisiones de Sheets
-    const res = await fetch(scriptUrl + "?action=getReports");
-    const data = await res.json();
+    // Subir firmas al Storage y obtener URLs
+    let sig1url = report.sig1 || "";
+    let sig2url = report.sig2 || "";
+    if (sig1url.startsWith("data:")) {
+      sig1url = await uploadToStorage(`firmas/${id}_sig1.png`, sig1url) || sig1url;
+    }
+    if (sig2url.startsWith("data:")) {
+      sig2url = await uploadToStorage(`firmas/${id}_sig2.png`, sig2url) || sig2url;
+    }
 
-    if (Array.isArray(data) && data.length > 0) {
+    const row = {
+      report_id:     report.id,
+      fecha:         report.fecha         || "",
+      turno:         report.turno         || "",
+      supervisor:    report.supervisor    || "",
+      area:          report.area          || "",
+      categoria:     report.categoria     || "",
+      icono:         report.icono         || "",
+      ok:            report.ok            || 0,
+      fail:          report.fail          || 0,
+      na:            report.na            || 0,
+      observaciones: report.observaciones || "",
+      sigName1:      report.sigName1      || "",
+      sigName2:      report.sigName2      || "",
+      items:         JSON.stringify(report.items || []),
+      photos:        JSON.stringify(photosWithUrls),
+      sig1:          sig1url,
+      sig2:          sig2url
+    };
+
+    const ok = await sbInsert("revisiones", row);
+    if (ok) { clearPending(report.id); return true; }
+    markPending(report.id); return false;
+  } catch(e) {
+    console.error("Supabase insert error:", e);
+    markPending(report.id); return false;
+  }
+}
+
+function markPending(id) {
+  let p = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+  if (!p.includes(String(id))) p.push(String(id));
+  localStorage.setItem("sdx_pending", JSON.stringify(p));
+}
+function clearPending(id) {
+  let p = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+  localStorage.setItem("sdx_pending", JSON.stringify(p.filter(x => x !== String(id))));
+}
+
+// ─── SYNC DESDE SUPABASE ──────────────────────────────────────────────────────
+async function syncAndRenderHistory() {
+  renderHistory();
+  const list = document.getElementById("historyList");
+  const syncBar = document.createElement("div");
+  syncBar.style.cssText = "background:#e8f0fe;color:#004B93;font-size:12px;font-weight:500;padding:8px 14px;border-radius:10px;margin-bottom:12px;display:flex;align-items:center;gap:8px;";
+  syncBar.innerHTML = `<span style="display:inline-block;width:12px;height:12px;border:2px solid #c0cfe8;border-top-color:#004B93;border-radius:50%;animation:spin 0.7s linear infinite;"></span> Sincronizando...`;
+  list.insertAdjacentElement("beforebegin", syncBar);
+
+  try {
+    // Reintentar pendientes
+    const pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+    for (const pid of pending) {
+      const r = reports.find(x => String(x.id) === pid);
+      if (r) await sendToSheets(r);
+    }
+
+    // Traer todas las revisiones de Supabase
+    const remote = await sbSelect("revisiones");
+    if (remote.length > 0) {
       const localMap = {};
       reports.forEach(r => { localMap[String(r.id)] = r; });
-
-      data.forEach(remote => {
-        const rid = String(remote.id);
-        const local = localMap[rid];
-        // Si no existe localmente, agregar
-        if (!local) {
-          reports.push(remote);
-        } else {
-          // Si existe pero le faltan items/fotos/firmas (vino del script viejo), actualizar
-          const missingItems  = !local.items  || local.items.length  === 0;
-          const missingSigs   = !local.sig1   || local.sig1 === "";
-          if (missingItems || missingSigs) {
-            Object.assign(local, remote);
-          }
-        }
+      remote.forEach(row => {
+        const rid = String(row.report_id);
+        const parsed = {
+          id:            row.report_id,
+          fecha:         row.fecha,
+          turno:         row.turno,
+          supervisor:    row.supervisor,
+          area:          row.area,
+          categoria:     row.categoria,
+          icono:         row.icono,
+          ok:            row.ok,
+          fail:          row.fail,
+          na:            row.na,
+          observaciones: row.observaciones,
+          sigName1:      row.sigName1,
+          sigName2:      row.sigName2,
+          items:         safeParseJson(row.items, []),
+          photos:        safeParseJson(row.photos, []),
+          sig1:          row.sig1,
+          sig2:          row.sig2
+        };
+        if (!localMap[rid]) { reports.push(parsed); }
+        else { Object.assign(localMap[rid], parsed); }
       });
-
       reports.sort((a,b) => b.id - a.id);
       localStorage.setItem("sdx_reports", JSON.stringify(reports));
-
-      syncBar.style.background = "#EAF3DE";
-      syncBar.style.color = "#3B6D11";
-      syncBar.innerHTML = `✓ Sincronizado — ${data.length} revisiones en total`;
+      syncBar.style.background = "#EAF3DE"; syncBar.style.color = "#3B6D11";
+      syncBar.innerHTML = `✓ Sincronizado — ${remote.length} revisiones`;
     } else {
-      syncBar.style.background = "#EAF3DE";
-      syncBar.style.color = "#3B6D11";
+      syncBar.style.background = "#EAF3DE"; syncBar.style.color = "#3B6D11";
       syncBar.innerHTML = `✓ Sin revisiones nuevas`;
     }
     renderHistory();
   } catch(e) {
-    syncBar.style.background = "#fff7e6";
-    syncBar.style.color = "#BA7517";
-    syncBar.innerHTML = `⚠ Sin conexión a Sheets — mostrando datos locales`;
+    syncBar.style.background = "#fff7e6"; syncBar.style.color = "#BA7517";
+    syncBar.innerHTML = `⚠ Sin conexión — mostrando datos locales`;
   }
   setTimeout(() => syncBar.remove(), 5000);
+}
+
+function safeParseJson(str, fallback) {
+  try { return JSON.parse(str); } catch(e) { return fallback; }
 }
 
 // ─── HISTORY ──────────────────────────────────────────────────────────────────
@@ -957,15 +1153,26 @@ function renderHistory() {
   const list=document.getElementById("historyList");
   const txt=(document.getElementById("filterText")?.value||"").toLowerCase();
   const turnoF=document.getElementById("filterTurno")?.value||"";
+  const pending = JSON.parse(localStorage.getItem("sdx_pending") || "[]");
+  const desde = document.getElementById("filterFechaDesde")?.value || "";
+  const hasta = document.getElementById("filterFechaHasta")?.value || "";
   let filtered=reports.map((r,globalIdx)=>({...r, globalIdx})).filter(r=>{
     const matchTxt=!txt||(r.area.toLowerCase().includes(txt)||r.supervisor.toLowerCase().includes(txt));
     const matchTurno=!turnoF||r.turno===turnoF;
-    return matchTxt&&matchTurno;
+    const matchDesde=!desde||r.fecha>=desde;
+    const matchHasta=!hasta||r.fecha<=hasta;
+    return matchTxt&&matchTurno&&matchDesde&&matchHasta;
   });
   if (!filtered.length) { list.innerHTML=`<div class="history-empty"><div style="font-size:32px;margin-bottom:8px">📭</div><p>No hay revisiones guardadas aún</p></div>`; return; }
-  let html=`<button class="btn-delete-all" onclick="requestDeleteAll()">🗑 Borrar todo el historial</button>`;
-  html+=filtered.map((r,i)=>`
-    <div class="report-card">
+  let html=`<button class="btn-delete-all" onclick="requestDeleteAll()" type="button">🗑 Borrar todo el historial</button>`;
+  html+=filtered.map((r,i)=>{
+    const isPending = pending.includes(String(r.id));
+    return `
+    <div class="report-card" style="${isPending?'border-left:3px solid #EF9F27;':''}">
+      ${isPending ? `<div style="background:#FFF7E6;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <span style="font-size:12px;color:#BA7517;font-weight:500;">⚠ No se envió a Sheets</span>
+        <button onclick="reenviarRevision(${r.id})" type="button" style="background:#EF9F27;color:#fff;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap;">📤 Reenviar</button>
+      </div>` : ''}
       <div class="report-card-header" onclick="toggleReport('hist-${i}')">
         <div class="report-card-icon">${r.icono}</div>
         <div class="report-card-info">
@@ -976,7 +1183,7 @@ function renderHistory() {
           <span class="badge badge-ok">✓ ${r.ok}</span>
           <span class="badge badge-fail">✗ ${r.fail}</span>
           ${r.na>0?`<span class="badge badge-na">— ${r.na}</span>`:""}
-          <button class="btn-delete" onclick="event.stopPropagation();requestDeleteOne(${r.globalIdx})">Borrar</button>
+          <button class="btn-delete" onclick="event.stopPropagation();requestDeleteOne(${r.globalIdx})" type="button">Borrar</button>
         </div>
       </div>
       <div class="report-detail" id="hist-${i}">
@@ -995,13 +1202,31 @@ function renderHistory() {
           </div>
         </div>
         <div style="padding:12px 0 4px;">
-          <button onclick="exportPdf(${r.id})" style="width:100%;padding:12px;background:#004B93;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <button onclick="exportPdf(${r.id})" type="button" style="width:100%;padding:12px;background:#004B93;color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
             📄 &nbsp;Exportar revisión a PDF
           </button>
         </div>
       </div>
-    </div>`).join("");
+    </div>`;
+  }).join("");
   list.innerHTML=html;
+}
+
+async function reenviarRevision(reportId) {
+  const r = reports.find(x => x.id === reportId);
+  if (!r) return;
+  const btn = event.target;
+  btn.textContent = "Enviando...";
+  btn.disabled = true;
+  const ok = await sendToSheets(r);
+  if (ok) {
+    showToast("Revisión enviada a Sheets ✓");
+    renderHistory();
+  } else {
+    showToast("No se pudo enviar, intenta más tarde", "error");
+    btn.textContent = "📤 Reenviar";
+    btn.disabled = false;
+  }
 }
 
 function toggleReport(id) {
@@ -1063,13 +1288,40 @@ const PIN_TURNO_A = "123456";
 const PIN_TURNO_B = "987654";
 let kpiSession = null; // 'A', 'B', or 'admin'
 
-function initKpiTab() {
+async function initKpiTab() {
   if (!kpiSession) {
     document.getElementById("kpiLockScreen").style.display = "block";
     document.getElementById("kpiDashboard").style.display = "none";
   } else {
+    // Sincronizar desde Supabase antes de mostrar KPIs
+    const cont = document.getElementById("kpiContent");
+    cont.innerHTML = `<div class="kpi-empty"><span style="display:inline-block;width:16px;height:16px;border:2px solid #c0cfe8;border-top-color:#004B93;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:8px;vertical-align:middle;"></span>Cargando datos...</div>`;
+    try {
+      const remote = await sbSelect("revisiones");
+      if (remote.length > 0) {
+        const localMap = {};
+        reports.forEach(r => { localMap[String(r.id)] = r; });
+        remote.forEach(row => {
+          const rid = String(row.report_id);
+          const parsed = {
+            id: row.report_id, fecha: row.fecha, turno: row.turno,
+            supervisor: row.supervisor, area: row.area, categoria: row.categoria,
+            icono: row.icono, ok: row.ok, fail: row.fail, na: row.na,
+            observaciones: row.observaciones, sigName1: row.sigName1, sigName2: row.sigName2,
+            items: safeParseJson(row.items, []),
+            photos: safeParseJson(row.photos, []),
+            sig1: row.sig1, sig2: row.sig2
+          };
+          if (!localMap[rid]) reports.push(parsed);
+          else Object.assign(localMap[rid], parsed);
+        });
+        reports.sort((a,b) => b.id - a.id);
+        localStorage.setItem("sdx_reports", JSON.stringify(reports));
+      }
+    } catch(e) { /* usa datos locales si falla */ }
     populateMonthFilter();
     renderKpi();
+    if (kpiSession === "admin") loadCoberturaKpi();
   }
 }
 
@@ -1099,8 +1351,7 @@ function requestKpiAccess(type) {
     document.getElementById("kpiAdminFilters").style.display = type === "admin" ? "flex" : "none";
     document.getElementById("kpiMonthFilter").style.display = "flex";
     document.getElementById("kpiTitle").textContent = type === "admin" ? "Dashboard — Administrador" : "Dashboard — Turno " + type;
-    populateMonthFilter();
-    renderKpi();
+    initKpiTab();
   };
   document.getElementById("pinDesc").textContent = "Ingresa el " + labelMap[type];
   pendingKpiPin = pinMap[type];
@@ -1441,6 +1692,12 @@ function renderKpi() {
 
     ${kpiSession === "admin" ? `
     <div class="kpi-section">
+      <h3>Cobertura del cronograma hoy</h3>
+      <div id="kpiCobertura"><div class="kpi-empty">Cargando...</div></div>
+    </div>` : ""}
+
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
       <h3>Supervisor más activo</h3>
       ${supActivo.length === 0 ? `<div class="kpi-empty">Sin datos</div>` :
         supActivo.map(([sup, count], i) => `
@@ -1508,6 +1765,31 @@ function renderKpi() {
         </div>`}
     </div>` : ""}
 
+    ${kpiSession === "admin" ? `
+    <div class="kpi-section">
+      <h3>Última actividad por supervisor</h3>
+      ${(() => {
+        const actividad = JSON.parse(localStorage.getItem("sdx_actividad") || "{}");
+        const supervisores = ["Douglas Aguilar", "Efrain Seas"];
+        return supervisores.map(sup => {
+          const ultima = actividad[sup];
+          if (!ultima) return `<div class="kpi-row"><span class="kpi-row-label">👤 ${sup}</span><span style="font-size:12px;color:var(--text4);">Sin actividad registrada</span></div>`;
+          const d = new Date(ultima);
+          const hace = Math.floor((Date.now() - d) / 60000);
+          const label = hace < 60 ? `Hace ${hace} min` : hace < 1440 ? `Hace ${Math.floor(hace/60)}h` : `Hace ${Math.floor(hace/1440)}d`;
+          const color = hace < 120 ? 'var(--ok)' : hace < 1440 ? 'var(--warn)' : 'var(--fail)';
+          return `<div class="kpi-row">
+            <span class="kpi-row-label">👤 ${sup}</span>
+            <span style="font-size:12px;font-weight:600;color:${color};">${label}</span>
+          </div>`;
+        }).join("");
+      })()}
+    </div>
+
+    <button class="btn-report" onclick="exportReporteGerencia()" type="button">
+      📊 Exportar reporte para gerencia (PDF)
+    </button>` : ""}
+
     <div class="kpi-section">
       <h3>Tendencia semanal</h3>
       ${weekly.length === 0 ? `<div class="kpi-empty">Sin datos suficientes</div>` :
@@ -1533,6 +1815,47 @@ function renderKpi() {
 function togglePendingAreas() {
   const box = document.getElementById("pendingAreasBox");
   if (box) box.style.display = box.style.display === "none" ? "block" : "none";
+}
+
+async function loadCoberturaKpi() {
+  const el = document.getElementById("kpiCobertura");
+  if (!el) return;
+  try {
+    const hoy = new Date().toISOString().split("T")[0];
+    const res = await fetch(
+      `${SUPABASE_URL}/rest/v1/cronograma?fecha=eq.${hoy}&order=supervisor.asc,zona.asc`,
+      { headers: { ...SB_HEADERS, "Prefer": "return=representation" } }
+    );
+    const cronHoy = res.ok ? await res.json() : [];
+    if (!cronHoy.length) { el.innerHTML = `<div class="kpi-empty">No hay revisiones programadas para hoy en el cronograma</div>`; return; }
+
+    const revisadasHoy = new Set(reports.filter(r => r.fecha === hoy).map(r => r.supervisor + "|" + r.area));
+    const supervisores = [...new Set(cronHoy.map(r => r.supervisor))];
+
+    el.innerHTML = supervisores.map(sup => {
+      const asignadas = cronHoy.filter(r => r.supervisor === sup);
+      const hechas = asignadas.filter(r => revisadasHoy.has(sup + "|" + r.area)).length;
+      const pct = Math.round((hechas / asignadas.length) * 100);
+      const color = pct === 100 ? "var(--ok)" : pct > 0 ? "var(--warn)" : "var(--fail)";
+      return `<div class="kpi-row" style="margin-bottom:12px;">
+        <span class="kpi-row-label" style="font-weight:600;">👤 ${sup}</span>
+        <div style="flex:1;margin:0 10px;">
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:4px;">
+            <span>${hechas} de ${asignadas.length} áreas</span>
+            <span style="font-weight:700;color:${color}">${pct}%</span>
+          </div>
+          <div style="background:var(--row-hover);border-radius:4px;height:8px;">
+            <div style="height:8px;border-radius:4px;background:${color};width:${pct}%;transition:width 0.4s;"></div>
+          </div>
+          ${hechas < asignadas.length ? `<div style="margin-top:6px;display:flex;flex-wrap:wrap;gap:4px;">
+            ${asignadas.filter(r=>!revisadasHoy.has(sup+"|"+r.area)).map(r=>`<span style="font-size:11px;background:var(--fail-bg);color:var(--fail);border-radius:20px;padding:2px 8px;">${r.area}</span>`).join("")}
+          </div>` : `<div style="margin-top:6px;font-size:12px;color:var(--ok);">✅ Ronda completa</div>`}
+        </div>
+      </div>`;
+    }).join("");
+  } catch(e) {
+    el.innerHTML = `<div class="kpi-empty">Sin datos de cronograma</div>`;
+  }
 }
 
 function getWeek(d) {
@@ -1567,40 +1890,77 @@ function diasDesde(fechaStr) {
   return Math.floor((hoy - d) / 86400000);
 }
 
+// ─── HALLAZGO MODAL ───────────────────────────────────────────────────────────
+let pendingHallazgoData = null;
+let pendingResolverHallazgoId = null;
+
 function abrirHallazgo(areaName, itemName, supervisor, fecha) {
-  const desc = prompt(`Hallazgo en "${areaName}"\nÍtem: ${itemName}\n\nDescripción del problema (opcional):`);
-  if (desc === null) return; // canceló
+  pendingHallazgoData = { areaName, itemName, supervisor, fecha };
+  document.getElementById("hallazgoModalDesc").textContent = `${itemName} — ${areaName}`;
+  document.getElementById("hallazgoDesc").value = "";
+  document.getElementById("hallazgoPrioridad").value = "Media";
+  document.getElementById("hallazgoModal").classList.add("show");
+}
+
+function cerrarModalHallazgo() {
+  document.getElementById("hallazgoModal").classList.remove("show");
+  pendingHallazgoData = null;
+}
+
+function confirmarHallazgo() {
+  if (!pendingHallazgoData) return;
+  const { areaName, itemName, supervisor, fecha } = pendingHallazgoData;
+  const desc = document.getElementById("hallazgoDesc").value.trim();
+  const prioridad = document.getElementById("hallazgoPrioridad").value;
   const h = {
     id: Date.now(),
-    area: areaName,
-    item: itemName,
-    descripcion: desc.trim(),
-    supervisor: supervisor,
-    fechaAbierto: fecha,
+    area: areaName, item: itemName,
+    descripcion: desc, prioridad,
+    supervisor, fechaAbierto: fecha,
     estado: "abierto",
-    fechaCerrado: null,
-    supervisorCerro: null
+    fechaCerrado: null, supervisorCerro: null, accionTomada: null
   };
   hallazgos.unshift(h);
   saveHallazgos();
+  cerrarModalHallazgo();
   showToast("Hallazgo registrado ✓");
 }
 
 function resolverHallazgo(id) {
   const h = hallazgos.find(x => x.id === id);
   if (!h) return;
-  const supervisor = prompt(`Confirmar cierre del hallazgo:\n"${h.item}" en ${h.area}\n\nIngresa tu nombre para confirmar:`);
-  if (!supervisor || supervisor.trim() === "") return;
-  if (supervisor.trim().toLowerCase() !== h.supervisor.trim().toLowerCase()) {
-    showToast("Solo el supervisor que abrió el hallazgo puede cerrarlo", "error");
-    return;
+  pendingResolverHallazgoId = id;
+  document.getElementById("resolverModalDesc").textContent = `"${h.item}" en ${h.area}`;
+  document.getElementById("resolverAccion").value = "";
+  document.getElementById("resolverNombre").value = "";
+  document.getElementById("resolverModal").classList.add("show");
+}
+
+function cerrarModalResolver() {
+  document.getElementById("resolverModal").classList.remove("show");
+  pendingResolverHallazgoId = null;
+}
+
+function confirmarResolver() {
+  const id = pendingResolverHallazgoId;
+  if (!id) return;
+  const h = hallazgos.find(x => x.id === id);
+  if (!h) return;
+  const nombre = document.getElementById("resolverNombre").value.trim();
+  const accion = document.getElementById("resolverAccion").value.trim();
+  if (!nombre) { showToast("Ingresá tu nombre para confirmar","error"); return; }
+  if (nombre.toLowerCase() !== h.supervisor.toLowerCase()) {
+    showToast("Solo el supervisor que abrió el hallazgo puede cerrarlo","error"); return;
   }
+  if (!accion) { showToast("Describí la acción tomada","error"); return; }
   h.estado = "cerrado";
   h.fechaCerrado = new Date().toISOString().split("T")[0];
-  h.supervisorCerro = supervisor.trim();
+  h.supervisorCerro = nombre;
+  h.accionTomada = accion;
   saveHallazgos();
+  cerrarModalResolver();
   renderHallazgos();
-  showToast("Hallazgo cerrado ✓");
+  showToast("Hallazgo resuelto ✓");
 }
 
 function switchHallazgosView(view) {
@@ -1623,6 +1983,8 @@ function renderHallazgos() {
   }
 
   cont.innerHTML = lista.map(h => {
+    const prioClass = (h.prioridad||"Media").toLowerCase();
+    const prioBadge = `<span class="prioridad-${prioClass}">${h.prioridad||"Media"}</span>`;
     if (h.estado === "abierto") {
       const dias = diasDesde(h.fechaAbierto);
       const nivel = dias >= DIAS_CRITICO ? "critico" : "reciente";
@@ -1636,29 +1998,31 @@ function renderHallazgos() {
             <h3>${h.item}</h3>
             <p>${h.area} &nbsp;·&nbsp; ${h.supervisor} &nbsp;·&nbsp; ${h.fechaAbierto}</p>
           </div>
-          ${dias >= DIAS_CRITICO ? `<span style="font-size:11px;background:#FCEBEB;color:#A32D2D;padding:3px 8px;border-radius:20px;font-weight:600;white-space:nowrap;">⚠ Crítico</span>` : ""}
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
+            ${prioBadge}
+            ${dias >= DIAS_CRITICO ? `<span style="font-size:11px;background:var(--fail-bg);color:var(--fail);padding:2px 8px;border-radius:20px;font-weight:600;">⚠ Vencido</span>` : ""}
+          </div>
         </div>
         ${h.descripcion ? `<div class="hallazgo-desc">${h.descripcion}</div>` : ""}
         <div class="hallazgo-actions">
-          <button class="btn-resolver" onclick="resolverHallazgo(${h.id})">✓ Marcar como resuelto</button>
+          <button class="btn-resolver" onclick="resolverHallazgo(${h.id})" type="button">✓ Marcar como resuelto</button>
         </div>
       </div>`;
     } else {
       const dias = h.fechaAbierto && h.fechaCerrado
-        ? Math.floor((new Date(h.fechaCerrado) - new Date(h.fechaAbierto)) / 86400000)
-        : "—";
+        ? Math.floor((new Date(h.fechaCerrado) - new Date(h.fechaAbierto)) / 86400000) : "—";
       return `<div class="hallazgo-card cerrado">
         <div class="hallazgo-header">
-          <div class="hallazgo-dias cerrado">
-            <span class="d-num">✓</span>
-          </div>
+          <div class="hallazgo-dias cerrado"><span class="d-num">✓</span></div>
           <div class="hallazgo-info">
             <h3>${h.item}</h3>
-            <p>${h.area} &nbsp;·&nbsp; Abierto: ${h.fechaAbierto} &nbsp;·&nbsp; Cerrado: ${h.fechaCerrado}</p>
+            <p>${h.area} &nbsp;·&nbsp; ${h.fechaAbierto} → ${h.fechaCerrado}</p>
           </div>
+          ${prioBadge}
         </div>
         ${h.descripcion ? `<div class="hallazgo-desc">${h.descripcion}</div>` : ""}
-        <div class="hallazgo-actions" style="color:#888;font-size:12px;">
+        ${h.accionTomada ? `<div class="hallazgo-accion">✅ <strong>Acción tomada:</strong> ${h.accionTomada}</div>` : ""}
+        <div class="hallazgo-actions" style="color:var(--text3);font-size:12px;">
           Resuelto por <strong>${h.supervisorCerro}</strong> &nbsp;·&nbsp; ${dias} día${dias !== 1 ? "s" : ""} abierto
         </div>
       </div>`;
@@ -1810,6 +2174,119 @@ ${photosHtml}
   win.document.close();
 }
 
+// ─── REPORTE GERENCIA PDF ─────────────────────────────────────────────────────
+function exportReporteGerencia() {
+  const data = getKpiData();
+  if (!data.length) { showToast("No hay datos para el período seleccionado","error"); return; }
+
+  const totalOk   = data.reduce((s,r)=>s+(r.ok||0),0);
+  const totalFail = data.reduce((s,r)=>s+(r.fail||0),0);
+  const totalNa   = data.reduce((s,r)=>s+(r.na||0),0);
+  const pct = totalOk+totalFail>0 ? Math.round((totalOk/(totalOk+totalFail))*100) : 0;
+  const pctColor = pct>=90?'#3B6D11':pct>=70?'#BA7517':'#A32D2D';
+
+  // Por área
+  const byArea = {};
+  data.forEach(r=>{ if(!byArea[r.area])byArea[r.area]={ok:0,fail:0}; byArea[r.area].ok+=r.ok||0; byArea[r.area].fail+=r.fail||0; });
+  const areaRanking = Object.entries(byArea).map(([area,v])=>{ const t=v.ok+v.fail; return {area,pct:t>0?Math.round((v.ok/t)*100):100,fail:v.fail}; }).sort((a,b)=>a.pct-b.pct);
+
+  // Por supervisor
+  const bySup = {};
+  data.forEach(r=>{ if(!bySup[r.supervisor])bySup[r.supervisor]={ok:0,fail:0,rev:0}; bySup[r.supervisor].ok+=r.ok||0; bySup[r.supervisor].fail+=r.fail||0; bySup[r.supervisor].rev++; });
+  const supRows = Object.entries(bySup).map(([sup,v])=>{ const t=v.ok+v.fail; return {sup,pct:t>0?Math.round((v.ok/t)*100):100,rev:v.rev}; }).sort((a,b)=>b.pct-a.pct);
+
+  // Hallazgos
+  const hallAbiertos = hallazgos.filter(h=>h.estado==="abierto");
+  const hallCerrados = hallazgos.filter(h=>h.estado==="cerrado");
+
+  const fechaHoy = new Date().toLocaleDateString('es-CR',{day:'2-digit',month:'long',year:'numeric'});
+  const periodoSel = document.getElementById("kpiMonthSelect")?.options[document.getElementById("kpiMonthSelect")?.selectedIndex]?.text || "Todo el período";
+
+  const html = `<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"/>
+<title>Reporte Gerencia — Sodexo @ ICU Medical</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;} body{font-family:Arial,sans-serif;font-size:12px;color:#1a1a1a;padding:28px 36px;background:#fff;}
+  .header{display:flex;align-items:center;gap:14px;border-bottom:3px solid #004B93;padding-bottom:14px;margin-bottom:22px;}
+  .logo{width:44px;height:44px;border-radius:50%;background:#004B93;color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+  h1{font-size:18px;font-weight:700;color:#004B93;} .subtitle{font-size:11px;color:#666;margin-top:2px;}
+  .periodo{font-size:11px;background:#e8f0fe;color:#004B93;padding:4px 12px;border-radius:20px;margin-left:auto;font-weight:600;}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:22px;}
+  .kpi{background:#f4f5f7;border-radius:10px;padding:14px;text-align:center;border:1px solid #e4e4e4;}
+  .kpi .num{font-size:28px;font-weight:700;} .kpi .lbl{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.4px;margin-top:2px;}
+  h2{font-size:13px;font-weight:700;color:#004B93;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #e4e4e4;padding-bottom:6px;margin-bottom:12px;margin-top:20px;}
+  table{width:100%;border-collapse:collapse;margin-bottom:18px;}
+  th{font-size:10px;font-weight:600;color:#aaa;text-align:left;padding:7px 10px;text-transform:uppercase;letter-spacing:0.4px;border-bottom:2px solid #f0f0f0;}
+  td{font-size:12px;padding:8px 10px;border-bottom:1px solid #f8f8f8;color:#333;}
+  .bar-wrap{width:100px;height:7px;background:#f0f0f0;border-radius:4px;display:inline-block;vertical-align:middle;}
+  .bar{height:7px;border-radius:4px;} .ok-bar{background:#639922;} .warn-bar{background:#EF9F27;} .fail-bar{background:#E24B4A;}
+  .pct{font-weight:700;margin-left:8px;}
+  .hall-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;}
+  .hall-box{background:#f4f5f7;border-radius:8px;padding:12px;text-align:center;border:1px solid #e4e4e4;}
+  .hall-box .num{font-size:22px;font-weight:700;} .hall-box .lbl{font-size:10px;color:#888;margin-top:2px;}
+  .footer{margin-top:24px;border-top:1px solid #e4e4e4;padding-top:10px;font-size:10px;color:#aaa;display:flex;justify-content:space-between;}
+  @media print{body{padding:16px 20px;}}
+</style></head><body>
+<div class="header">
+  <div class="logo">SDX</div>
+  <div><h1>Reporte de Cumplimiento — Sodexo @ ICU Medical</h1><div class="subtitle">Servicio de limpieza y cafetería</div></div>
+  <span class="periodo">${periodoSel}</span>
+</div>
+
+<div class="kpis">
+  <div class="kpi"><div class="num" style="color:${pctColor}">${pct}%</div><div class="lbl">Cumplimiento general</div></div>
+  <div class="kpi"><div class="num" style="color:#3B6D11">${totalOk}</div><div class="lbl">Ítems cumplen</div></div>
+  <div class="kpi"><div class="num" style="color:#A32D2D">${totalFail}</div><div class="lbl">Ítems no cumplen</div></div>
+  <div class="kpi"><div class="num" style="color:#004B93">${data.length}</div><div class="lbl">Revisiones realizadas</div></div>
+</div>
+
+<h2>Cumplimiento por área (peores primero)</h2>
+<table>
+  <tr><th>Área</th><th>Cumplimiento</th><th>No cumple</th></tr>
+  ${areaRanking.slice(0,20).map(a=>{
+    const bc = a.pct>=90?'ok-bar':a.pct>=70?'warn-bar':'fail-bar';
+    const pc = a.pct>=90?'#3B6D11':a.pct>=70?'#BA7517':'#A32D2D';
+    return `<tr><td>${a.area}</td><td><div class="bar-wrap"><div class="bar ${bc}" style="width:${a.pct}%"></div></div><span class="pct" style="color:${pc}">${a.pct}%</span></td><td style="color:#A32D2D;font-weight:600;">${a.fail}</td></tr>`;
+  }).join("")}
+</table>
+
+<h2>Desempeño por supervisor</h2>
+<table>
+  <tr><th>Supervisor</th><th>Revisiones</th><th>Cumplimiento</th></tr>
+  ${supRows.map(s=>{
+    const bc = s.pct>=90?'ok-bar':s.pct>=70?'warn-bar':'fail-bar';
+    const pc = s.pct>=90?'#3B6D11':s.pct>=70?'#BA7517':'#A32D2D';
+    return `<tr><td>${s.sup}</td><td>${s.rev}</td><td><div class="bar-wrap"><div class="bar ${bc}" style="width:${s.pct}%"></div></div><span class="pct" style="color:${pc}">${s.pct}%</span></td></tr>`;
+  }).join("")}
+</table>
+
+<h2>Seguimiento de hallazgos</h2>
+<div class="hall-grid">
+  <div class="hall-box"><div class="num" style="color:#A32D2D">${hallAbiertos.length}</div><div class="lbl">Hallazgos abiertos</div></div>
+  <div class="hall-box"><div class="num" style="color:#3B6D11">${hallCerrados.length}</div><div class="lbl">Hallazgos resueltos</div></div>
+  <div class="hall-box"><div class="num" style="color:#BA7517">${hallAbiertos.filter(h=>diasDesde(h.fechaAbierto)>=DIAS_CRITICO).length}</div><div class="lbl">Críticos (+${DIAS_CRITICO} días)</div></div>
+  <div class="hall-box"><div class="num" style="color:#004B93">${hallAbiertos.filter(h=>(h.prioridad||"Media")==="Alta").length}</div><div class="lbl">Prioridad Alta</div></div>
+</div>
+
+${hallAbiertos.length>0?`<h2>Hallazgos abiertos</h2>
+<table>
+  <tr><th>Área</th><th>Ítem</th><th>Prioridad</th><th>Días abierto</th><th>Supervisor</th></tr>
+  ${hallAbiertos.sort((a,b)=>diasDesde(b.fechaAbierto)-diasDesde(a.fechaAbierto)).map(h=>`
+  <tr><td>${h.area}</td><td>${h.item}</td><td style="font-weight:600;color:${h.prioridad==='Alta'?'#A32D2D':h.prioridad==='Media'?'#BA7517':'#3B6D11'}">${h.prioridad||"Media"}</td><td>${diasDesde(h.fechaAbierto)}</td><td>${h.supervisor}</td></tr>`).join("")}
+</table>`:""}
+
+<div class="footer">
+  <span>Sodexo @ ICU Medical — Reporte generado automáticamente</span>
+  <span>${fechaHoy}</span>
+</div>
+<script>window.onload=()=>{window.print();}<\/script>
+</body></html>`;
+
+  const win = window.open('','_blank');
+  win.document.write(html);
+  win.document.close();
+}
+
 // ─── TOAST ────────────────────────────────────────────────────────────────────
 function showToast(msg, type="") {
   const t=document.getElementById("toast");
@@ -1821,7 +2298,7 @@ function showToast(msg, type="") {
 document.getElementById("fecha").value=new Date().toISOString().split("T")[0];
 buildSelect();
 updateHallazgosBadge();
-window.addEventListener("load",()=>{ initSig(1); initSig(2); });
-</script>
+initTheme();
+window.addEventListener("load",()=>{ initSig(1); initSig(2); });</script>
 </body>
 </html>
